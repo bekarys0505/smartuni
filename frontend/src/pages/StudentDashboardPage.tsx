@@ -148,7 +148,7 @@ export default function StudentDashboardPage() {
           groupsResponse,
         ] = await Promise.all([
           fetch(
-            'http://localhost:3000/api/student/dashboard',
+            `${import.meta.env.VITE_API_URL}/api/student/dashboard`,
             {
               method: 'GET',
               headers: {
@@ -158,7 +158,7 @@ export default function StudentDashboardPage() {
           ),
 
           fetch(
-            'http://localhost:3000/api/student/subjects',
+            `${import.meta.env.VITE_API_URL}/api/student/subjects`,
             {
               method: 'GET',
               headers: {
@@ -168,7 +168,7 @@ export default function StudentDashboardPage() {
           ),
 
           fetch(
-            'http://localhost:3000/api/student/groups',
+            `${import.meta.env.VITE_API_URL}/api/student/groups`,
             {
               method: 'GET',
               headers: {
@@ -257,7 +257,7 @@ export default function StudentDashboardPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/student/groups/${groupId}/join`,
+        `${import.meta.env.VITE_API_URL}/api/student/groups/${groupId}/join`,
         {
           method: 'POST',
           headers: {
