@@ -1,4 +1,3 @@
-
 import 'dotenv/config';
 import * as bcrypt from 'bcrypt';
 
@@ -192,6 +191,95 @@ async function main() {
       },
     }));
 
+  /*
+   * ==========================================
+   * 8. STUDENT USER
+   * ==========================================
+   */
+
+  const studentPasswordHash = await bcrypt.hash(
+    'Student123!',
+    12,
+  );
+
+  const studentUser = await prisma.user.upsert({
+    where: {
+      email: 'student@smartuni.kz',
+    },
+    update: {
+      fullName: 'Бекарыс Тест Студент',
+      passwordHash: studentPasswordHash,
+      role: 'STUDENT',
+      status: 'ACTIVE',
+    },
+    create: {
+      fullName: 'Бекарыс Тест Студент',
+      email: 'student@smartuni.kz',
+      passwordHash: studentPasswordHash,
+      role: 'STUDENT',
+      status: 'ACTIVE',
+      emailVerified: true,
+      phoneVerified: false,
+    },
+  });
+
+  /*
+   * ==========================================
+   * 9. STUDENT PROFILE
+   * ==========================================
+   */
+
+  const studentProfile = await prisma.studentProfile.upsert({
+    where: {
+      userId: studentUser.id,
+    },
+    update: {
+      universityId: university.id,
+      facultyId: faculty.id,
+      majorId: major.id,
+      course: 2,
+      premium: false,
+    },
+    create: {
+      userId: studentUser.id,
+      universityId: university.id,
+      facultyId: faculty.id,
+      majorId: major.id,
+      course: 2,
+      premium: false,
+    },
+  });
+
+  /*
+   * ==========================================
+   * 10. STUDENT GROUP MEMBERSHIP
+   * ==========================================
+   */
+
+  await prisma.groupMembership.upsert({
+    where: {
+      studentId_groupId: {
+        studentId: studentProfile.id,
+        groupId: group.id,
+      },
+    },
+    update: {
+      status: 'ACTIVE',
+      leftAt: null,
+    },
+    create: {
+      studentId: studentProfile.id,
+      groupId: group.id,
+      status: 'ACTIVE',
+    },
+  });
+
+  /*
+   * ==========================================
+   * 11. OUTPUT
+   * ==========================================
+   */
+
   console.log('');
   console.log('==========================================');
   console.log('SmartUni seed completed successfully');
@@ -208,7 +296,12 @@ async function main() {
   console.log('Password: Teacher123!');
 
   console.log('');
-  console.log('Teacher:', teacherUser.fullName);
+  console.log('Student login:');
+  console.log('Email:', studentUser.email);
+  console.log('Password: Student123!');
+
+  console.log('');
+  console.log('Student:', studentUser.fullName);
   console.log('Subject:', subject.name);
   console.log('Subject code:', subject.code);
   console.log('Group:', group.name);
