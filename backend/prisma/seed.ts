@@ -1,3 +1,4 @@
+
 import 'dotenv/config';
 import * as bcrypt from 'bcrypt';
 
@@ -207,13 +208,13 @@ async function main() {
       email: 'student@smartuni.kz',
     },
     update: {
-      fullName: 'Бекарыс Тест Студент',
+      fullName: 'Demo Student',
       passwordHash: studentPasswordHash,
       role: 'STUDENT',
       status: 'ACTIVE',
     },
     create: {
-      fullName: 'Бекарыс Тест Студент',
+      fullName: 'Demo Student',
       email: 'student@smartuni.kz',
       passwordHash: studentPasswordHash,
       role: 'STUDENT',
@@ -319,3 +320,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
