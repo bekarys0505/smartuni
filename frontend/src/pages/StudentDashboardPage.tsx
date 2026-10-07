@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AppShell } from '../components/layout/AppShell';
 
 type StudentData = {
   id: string;
@@ -94,9 +95,19 @@ type AvailableGroup = {
   status: GroupStatus;
 };
 
+type DashboardProgress = {
+  learning: number;
+  academic: number;
+  totalMaterials: number;
+  completedMaterials: number;
+  assignmentAverage: number;
+  testAverage: number;
+};
+
 type DashboardResponse = {
   message: string;
   student: StudentData;
+  progress?: DashboardProgress;
 };
 
 type SubjectsResponse = {
@@ -112,6 +123,9 @@ type GroupsResponse = {
 export default function StudentDashboardPage() {
   const [student, setStudent] =
     useState<StudentData | null>(null);
+
+  const [progress, setProgress] =
+    useState<DashboardProgress | null>(null);
 
   const [subjects, setSubjects] =
     useState<SubjectData[]>([]);
@@ -212,6 +226,10 @@ export default function StudentDashboardPage() {
           (dashboardData as DashboardResponse)
             .student,
         );
+
+        if ((dashboardData as DashboardResponse).progress) {
+          setProgress((dashboardData as DashboardResponse).progress!);
+        }
 
         setSubjects(
           (subjectsData as SubjectsResponse)
@@ -340,178 +358,8 @@ export default function StudentDashboardPage() {
   }
 
   return (
-    <div className="student-dashboard">
-      <header className="dashboard-header">
-        <div className="dashboard-logo">
-          <span className="dashboard-logo-mark">
-            S
-          </span>
-
-          <div>
-            <div className="dashboard-logo-title">
-              SmartUni
-            </div>
-
-            <div className="dashboard-logo-subtitle">
-              Электронды білім беру жүйесі
-            </div>
-          </div>
-        </div>
-
-        <div className="dashboard-header-right">
-          <button
-            className="notification-button"
-            type="button"
-          >
-            🔔
-          </button>
-
-          <div className="dashboard-user">
-            <div className="dashboard-avatar">
-              {student.fullName
-                .charAt(0)
-                .toUpperCase()}
-            </div>
-
-            <div className="dashboard-user-info">
-              <strong>
-                {student.fullName}
-              </strong>
-
-              <span>
-                {student.course}-курс
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="dashboard-layout">
-        <aside className="dashboard-sidebar">
-          <nav className="dashboard-nav">
-            <a
-              href="/student/dashboard"
-              className="dashboard-nav-item active"
-            >
-              <span>🏠</span>
-              Басты бет
-            </a>
-
-            <a
-              href="#subjects"
-              className="dashboard-nav-item"
-            >
-              <span>📚</span>
-              Пәндер
-            </a>
-
-            <a
-              href="#groups"
-              className="dashboard-nav-item"
-            >
-              <span>➕</span>
-              Топқа қосылу
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>📝</span>
-              Тапсырмалар
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>🧪</span>
-              Лаборатория
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>📅</span>
-              Күнтізбе
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>📊</span>
-              Бағалар
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>📈</span>
-              Прогресс
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>🔔</span>
-              Хабарламалар
-            </a>
-
-            <a
-              href="#"
-              className="dashboard-nav-item"
-            >
-              <span>⚙️</span>
-              Профиль
-            </a>
-          </nav>
-
-          <div className="dashboard-sidebar-bottom">
-            <div className="premium-sidebar-card">
-              <div className="premium-icon">
-                ⭐
-              </div>
-
-              <strong>
-                SmartUni Premium
-              </strong>
-
-              <p>
-                Оқу мүмкіндіктерін кеңейтіңіз.
-              </p>
-
-              <button type="button">
-                Толығырақ
-              </button>
-            </div>
-
-            <button
-              className="logout-button"
-              type="button"
-              onClick={() => {
-                localStorage.removeItem(
-                  'accessToken',
-                );
-
-                localStorage.removeItem(
-                  'smartuniUser',
-                );
-
-                window.location.href =
-                  '/login';
-              }}
-            >
-              <span>🚪</span>
-              Шығу
-            </button>
-          </div>
-        </aside>
-
-        <main className="dashboard-main">
+    <AppShell userRole="STUDENT">
+      <div className="student-dashboard-embedded">
           <section className="dashboard-welcome">
             <div>
               <div className="dashboard-badge">
@@ -562,12 +410,12 @@ export default function StudentDashboardPage() {
 
             <div className="dashboard-stat-card">
               <div className="stat-icon blue">
-                📝
+                📖
               </div>
 
               <div>
-                <span>Тапсырмалар</span>
-                <strong>0</strong>
+                <span>Оқу прогресі</span>
+                <strong>{progress ? `${progress.learning}%` : '—'}</strong>
               </div>
             </div>
 
@@ -578,7 +426,7 @@ export default function StudentDashboardPage() {
 
               <div>
                 <span>Орташа баға</span>
-                <strong>—</strong>
+                <strong>{progress && progress.academic > 0 ? `${progress.academic}%` : '—'}</strong>
               </div>
             </div>
 
@@ -597,6 +445,320 @@ export default function StudentDashboardPage() {
                 </strong>
               </div>
             </div>
+          </section>
+
+          {/* Progress Overview Section */}
+          {progress && (
+            <section
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '20px',
+                marginBottom: '28px',
+              }}
+            >
+              <div
+                style={{
+                  background: '#ffffff',
+                  padding: '24px',
+                  borderRadius: '16px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#2563eb', background: 'rgba(37, 99, 235, 0.08)', padding: '4px 8px', borderRadius: '6px' }}>
+                      ОҚУ ҮЛГЕРІМІ
+                    </span>
+                    <strong style={{ fontSize: '24px', fontWeight: 800, color: '#2563eb' }}>
+                      {progress.learning}%
+                    </strong>
+                  </div>
+
+                  <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#1e293b', margin: '0 0 8px 0' }}>
+                    Оқу материалдарының орындалуы
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 16px 0' }}>
+                    Барлығы {progress.completedMaterials} / {progress.totalMaterials} оқу материалы аяқталды
+                  </p>
+
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      background: '#f1f5f9',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${progress.learning}%`,
+                        height: '100%',
+                        background: '#2563eb',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <a
+                  href="/student/progress"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '10px 16px',
+                    background: '#f8fafc',
+                    color: '#2563eb',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    border: '1px solid #e2e8f0',
+                  }}
+                >
+                  Толық прогресті көру →
+                </a>
+              </div>
+
+              <div
+                style={{
+                  background: '#ffffff',
+                  padding: '24px',
+                  borderRadius: '16px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', background: 'rgba(34, 197, 94, 0.08)', padding: '4px 8px', borderRadius: '6px' }}>
+                      БАҒАЛАР
+                    </span>
+                    <strong style={{ fontSize: '24px', fontWeight: 800, color: '#16a34a' }}>
+                      {progress.academic > 0 ? `${progress.academic}%` : '—'}
+                    </strong>
+                  </div>
+
+                  <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#1e293b', margin: '0 0 8px 0' }}>
+                    Академиялық орташа нәтиже
+                  </h3>
+                  <div style={{ fontSize: '13px', color: '#64748b', margin: '0 0 16px 0' }}>
+                    Тапсырмалар: <strong>{progress.assignmentAverage > 0 ? `${progress.assignmentAverage}%` : '—'}</strong> | Тесттер: <strong>{progress.testAverage > 0 ? `${progress.testAverage}%` : '—'}</strong>
+                  </div>
+
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      background: '#f1f5f9',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${progress.academic}%`,
+                        height: '100%',
+                        background: '#16a34a',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <a
+                  href="/student/progress"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '10px 16px',
+                    background: '#f8fafc',
+                    color: '#16a34a',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    border: '1px solid #e2e8f0',
+                  }}
+                >
+                  Нәтижелерді талдау →
+                </a>
+              </div>
+            </section>
+          )}
+
+          {/* Quick LMS Shortcuts (Diary, Calendar, Assignments, Tests) */}
+          <section
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '16px',
+              marginBottom: '28px',
+            }}
+          >
+            <a
+              href="/student/diary"
+              style={{
+                background: '#ffffff',
+                padding: '18px 20px',
+                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  background: '#eff6ff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                }}
+              >
+                📖
+              </div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                  Электронды күнделік
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  Бүгінгі сабақтар мен дедлайндар
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/student/calendar"
+              style={{
+                background: '#ffffff',
+                padding: '18px 20px',
+                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  background: '#faf5ff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                }}
+              >
+                📅
+              </div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                  Күнтізбе
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  Айлық сабақ кестесі & оқиғалар
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/student/assignments"
+              style={{
+                background: '#ffffff',
+                padding: '18px 20px',
+                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  background: '#fffbeb',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                }}
+              >
+                📝
+              </div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                  Тапсырмалар
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  Үй жұмыстары мен бағалар
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/student/tests"
+              style={{
+                background: '#ffffff',
+                padding: '18px 20px',
+                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  background: '#f0fdf4',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                }}
+              >
+                ⏱️
+              </div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                  Тесттер
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  Онлайн тесттер мен нәтижелер
+                </div>
+              </div>
+            </a>
           </section>
 
           <section
@@ -1013,8 +1175,7 @@ export default function StudentDashboardPage() {
               </p>
             </div>
           </section>
-        </main>
       </div>
-    </div>
+    </AppShell>
   );
 }

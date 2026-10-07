@@ -2,6 +2,7 @@ import {
   IsEmail,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Length,
   Matches,
@@ -27,8 +28,13 @@ export class RegisterDto {
 
   @IsString()
   @Length(8, 100)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, {
+    message:
+      'Құпиясөз кемінде 8 таңбадан тұруы және кем дегенде 1 бас әріп, 1 кіші әріп және 1 саннан құралуы керек',
+  })
   password: string;
 
+  // SmartUni университет өрістері
   @IsString()
   @IsNotEmpty()
   universityId: string;
@@ -41,8 +47,9 @@ export class RegisterDto {
   @IsNotEmpty()
   majorId: string;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
   @Max(6)
-  course: number;
+  course?: number;
 }

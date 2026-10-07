@@ -4,13 +4,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'smartuni-dev-secret',
+      secret: process.env.JWT_SECRET || 'smartuni-secure-secret-key-change-in-production-2026',
       signOptions: {
-        expiresIn: '15m',
+        expiresIn: '7d',
       },
     }),
   ],
@@ -18,10 +19,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
   providers: [
     AuthService,
     JwtAuthGuard,
+    RolesGuard,
   ],
   exports: [
     JwtModule,
     JwtAuthGuard,
+    RolesGuard,
   ],
 })
 export class AuthModule {}

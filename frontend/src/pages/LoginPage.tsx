@@ -1,6 +1,7 @@
 
 import { type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDashboardRouteByRole, setAuth } from '../utils/auth';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -40,17 +41,11 @@ function LoginPage() {
         );
       }
 
-      localStorage.setItem(
-        'accessToken',
-        data.accessToken,
-      );
+      setAuth(data.accessToken, data.user);
 
-      localStorage.setItem(
-        'smartuniUser',
-        JSON.stringify(data.user),
-      );
-
-      navigate('/student/dashboard');
+      // Рөлге сәйкес бағыттау: STUDENT -> /student/dashboard, TEACHER -> /teacher/dashboard, ADMIN -> /admin/dashboard
+      const targetRoute = getDashboardRouteByRole(data.user?.role);
+      navigate(targetRoute);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

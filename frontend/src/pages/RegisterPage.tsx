@@ -1,16 +1,218 @@
+import { type FormEvent, useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+
+interface UniversityItem {
+  id: string;
+  name: string;
+  shortName: string | null;
+}
+
+interface FacultyItem {
+  id: string;
+  name: string;
+  universityId: string;
+}
+
+interface MajorItem {
+  id: string;
+  name: string;
+  facultyId: string;
+}
+
 function RegisterPage() {
+  const navigate = useNavigate();
+
+  // Жеке деректер state
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Оқу деректері state
+  const [universityId, setUniversityId] = useState('');
+  const [facultyId, setFacultyId] = useState('');
+  const [majorId, setMajorId] = useState('');
+  const [course, setCourse] = useState<number>(1);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  // Анықтамалық тізімдер
+  const [universities, setUniversities] = useState<UniversityItem[]>([]);
+  const [faculties, setFaculties] = useState<FacultyItem[]>([]);
+  const [majors, setMajors] = useState<MajorItem[]>([]);
+
+  // UI күйлері
+  const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // 1. Университеттер тізімін жүктеу
+  useEffect(() => {
+    async function loadUniversities() {
+      try {
+        setDataLoading(true);
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/public/universities`,
+        );
+        if (!res.ok) throw new Error('Университеттерді жүктеу сәтсіз аяқталды');
+        const data = await res.json();
+        setUniversities(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setDataLoading(false);
+      }
+    }
+
+    loadUniversities();
+  }, []);
+
+  // 2. Университет өзгергенде факультеттерді жүктеу
+  useEffect(() => {
+    if (!universityId) {
+      setFaculties([]);
+      setFacultyId('');
+      setMajors([]);
+      setMajorId('');
+      return;
+    }
+
+    async function loadFaculties() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/public/universities/${universityId}/faculties`,
+        );
+        if (!res.ok) throw new Error('Факультеттерді жүктеу сәтсіз аяқталды');
+        const data = await res.json();
+        setFaculties(data);
+        setFacultyId('');
+        setMajors([]);
+        setMajorId('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadFaculties();
+  }, [universityId]);
+
+  // 3. Факультет өзгергенде мамандықтарды жүктеу
+  useEffect(() => {
+    if (!facultyId) {
+      setMajors([]);
+      setMajorId('');
+      return;
+    }
+
+    async function loadMajors() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/public/faculties/${facultyId}/majors`,
+        );
+        if (!res.ok) throw new Error('Мамандықтарды жүктеу сәтсіз аяқталды');
+        const data = await res.json();
+        setMajors(data);
+        setMajorId('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadMajors();
+  }, [facultyId]);
+
+  // Тіркелу өңдеушісі
+  async function handleRegister(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+
+    // Тексерулер
+    if (!termsAccepted) {
+      setError('SmartUni пайдалану ережелерімен келісуіңіз қажет');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Құпиясөздер бір-біріне сәйкес келмейді');
+      return;
+    }
+
+    // Пароль күрделілігін тексеру (кемінде 8 таңба, 1 бас әріп, 1 кіші әріп, 1 сан)
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError(
+        'Құпиясөз кемінде 8 таңбадан тұруы және кем дегенде 1 бас әріп, 1 кіші әріп және 1 саннан құралуы керек',
+      );
+      return;
+    }
+
+    if (!universityId || !facultyId || !majorId) {
+      setError('Университетті, факультетті және мамандықты толық таңдаңыз');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullName: fullName.trim(),
+            phone: phone.trim(),
+            email: email.trim(),
+            password,
+            universityId,
+            facultyId,
+            majorId,
+            course: Number(course),
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMsg = Array.isArray(data?.message)
+          ? data.message.join(', ')
+          : data?.message || 'Тіркелу кезінде қате орын алды';
+        throw new Error(errorMsg);
+      }
+
+      setSuccess(
+        'Тіркелу сәтті аяқталды! Жүйеге кіру бетіне бағытталуда...',
+      );
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Тіркелу кезінде белгісіз қате орын алды');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="auth-page register-page">
       <div className="register-container">
         <div className="register-intro">
-          <a href="/" className="logo">
+          <Link to="/" className="logo">
             <span className="logo-mark">S</span>
             <span className="logo-text">SmartUni</span>
-          </a>
+          </Link>
 
-          <span className="register-badge">
-            SMARTUNI СТУДЕНТ
-          </span>
+          <span className="register-badge">SMARTUNI СТУДЕНТ</span>
 
           <h1>
             SmartUni-ге
@@ -19,9 +221,8 @@ function RegisterPage() {
           </h1>
 
           <p>
-            Оқу процесіңді бір жерден басқар.
-            Пәндеріңді, тапсырмаларыңды, бағаларыңды
-            және оқу прогресіңді бақыла.
+            Оқу процесіңді бір жерден басқар. Пәндеріңді, тапсырмаларыңды,
+            бағаларыңды және оқу прогресіңді бақыла.
           </p>
 
           <div className="register-benefits">
@@ -45,15 +246,11 @@ function RegisterPage() {
         <div className="auth-card register-card">
           <div className="auth-card-header">
             <h2>Аккаунт құру</h2>
-            <p>
-              Студент ретінде тіркелу үшін мәліметтеріңді енгіз
-            </p>
+            <p>Студент ретінде тіркелу үшін мәліметтеріңді енгіз</p>
           </div>
 
-          <form className="register-form">
-            <div className="form-section-title">
-              Жеке мәліметтер
-            </div>
+          <form className="register-form" onSubmit={handleRegister}>
+            <div className="form-section-title">Жеке мәліметтер</div>
 
             <div className="form-grid">
               <label>
@@ -61,6 +258,9 @@ function RegisterPage() {
                 <input
                   type="text"
                   placeholder="Аты-жөніңді енгіз"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
                 />
               </label>
 
@@ -68,7 +268,10 @@ function RegisterPage() {
                 Телефон
                 <input
                   type="tel"
-                  placeholder="+7 (___) ___-__-__"
+                  placeholder="+77011234567"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
                 />
               </label>
             </div>
@@ -78,6 +281,9 @@ function RegisterPage() {
               <input
                 type="email"
                 placeholder="example@mail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </label>
 
@@ -86,7 +292,10 @@ function RegisterPage() {
                 Құпиясөз
                 <input
                   type="password"
-                  placeholder="Құпиясөз жаса"
+                  placeholder="Кемінде 8 таңба, A-z, 0-9"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </label>
 
@@ -95,96 +304,112 @@ function RegisterPage() {
                 <input
                   type="password"
                   placeholder="Қайта енгіз"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                 />
               </label>
             </div>
 
-            <div className="form-section-title">
-              Оқу туралы
-            </div>
+            <div className="form-section-title">Оқу туралы</div>
 
             <label>
               Университет
-              <select defaultValue="">
+              <select
+                value={universityId}
+                onChange={(e) => setUniversityId(e.target.value)}
+                required
+                disabled={dataLoading}
+              >
                 <option value="" disabled>
-                  Университетті таңда
+                  {dataLoading
+                    ? 'Университеттер жүктелуде...'
+                    : 'Университетті таңда'}
                 </option>
-                <option>
-                  Шоқан Уәлиханов атындағы Көкшетау университеті
-                </option>
+                {universities.map((uni) => (
+                  <option key={uni.id} value={uni.id}>
+                    {uni.name}
+                  </option>
+                ))}
               </select>
             </label>
 
             <div className="form-grid">
               <label>
                 Факультет
-                <select defaultValue="">
+                <select
+                  value={facultyId}
+                  onChange={(e) => setFacultyId(e.target.value)}
+                  required
+                  disabled={!universityId || faculties.length === 0}
+                >
                   <option value="" disabled>
-                    Факультетті таңда
+                    {!universityId
+                      ? 'Алдымен университетті таңдаңыз'
+                      : faculties.length === 0
+                        ? 'Факультеттер табылмады'
+                        : 'Факультетті таңда'}
                   </option>
-                  <option>
-                    Физика-математика факультеті
-                  </option>
-                  <option>
-                    Экономика факультеті
-                  </option>
-                  <option>
-                    Педагогика факультеті
-                  </option>
+                  {faculties.map((fac) => (
+                    <option key={fac.id} value={fac.id}>
+                      {fac.name}
+                    </option>
+                  ))}
                 </select>
               </label>
 
               <label>
                 Курс
-                <select defaultValue="">
-                  <option value="" disabled>
-                    Курсты таңда
-                  </option>
-                  <option>1 курс</option>
-                  <option>2 курс</option>
-                  <option>3 курс</option>
-                  <option>4 курс</option>
+                <select
+                  value={course}
+                  onChange={(e) => setCourse(Number(e.target.value))}
+                  required
+                >
+                  <option value={1}>1 курс</option>
+                  <option value={2}>2 курс</option>
+                  <option value={3}>3 курс</option>
+                  <option value={4}>4 курс</option>
                 </select>
               </label>
             </div>
 
             <label>
               Мамандық
-              <select defaultValue="">
+              <select
+                value={majorId}
+                onChange={(e) => setMajorId(e.target.value)}
+                required
+                disabled={!facultyId || majors.length === 0}
+              >
                 <option value="" disabled>
-                  Мамандықты таңда
+                  {!facultyId
+                    ? 'Алдымен факультетті таңдаңыз'
+                    : majors.length === 0
+                      ? 'Мамандықтар табылмады'
+                      : 'Мамандықты таңда'}
                 </option>
-                <option>
-                  Ақпараттық-коммуникациялық технологиялар
-                </option>
-                <option>
-                  Информатика
-                </option>
-                <option>
-                  Математика
-                </option>
-                <option>
-                  Физика
-                </option>
+                {majors.map((maj) => (
+                  <option key={maj.id} value={maj.id}>
+                    {maj.name}
+                  </option>
+                ))}
               </select>
             </label>
 
-            <div className="form-section-title">
-              Негізгі пәндер
-            </div>
+            <div className="form-section-title">Негізгі пәндер</div>
 
             <p className="form-hint">
-              Оқу барысында жиі қолданатын негізгі 1–2 пәнді таңда.
+              Оқу барысында жиі қолданатын негізгі 1–2 пәнді таңдаңыз.
             </p>
 
             <div className="subject-selection">
               <label className="subject-option">
-                <input type="checkbox" />
+                <input type="checkbox" defaultChecked />
                 <span>Бағдарламалау</span>
               </label>
 
               <label className="subject-option">
-                <input type="checkbox" />
+                <input type="checkbox" defaultChecked />
                 <span>Деректер базасы</span>
               </label>
 
@@ -202,31 +427,53 @@ function RegisterPage() {
             <div className="form-notice">
               <span>💡</span>
               <p>
-                Тіркелу топқа автоматты түрде қоспайды.
-                Таңдаған тобыңа қосылу үшін оқытушыға
-                арнайы өтініш жіберіледі.
+                Тіркелу топқа автоматты түрде қоспайды. Таңдаған тобыңа қосылу
+                үшін оқытушыға арнайы өтініш жіберіледі.
               </p>
             </div>
 
             <label className="terms">
-              <input type="checkbox" />
-              <span>
-                Мен SmartUni пайдалану ережелерімен
-                келісемін
-              </span>
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                required
+              />
+              <span>Мен SmartUni пайдалану ережелерімен келісемін</span>
             </label>
+
+            {error && <div className="auth-error">{error}</div>}
+
+            {success && (
+              <div
+                className="auth-success"
+                style={{
+                  padding: '12px 16px',
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: '10px',
+                  color: '#15803d',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                }}
+              >
+                {success}
+              </div>
+            )}
 
             <button
               type="submit"
               className="primary-button register-submit"
+              disabled={loading}
             >
-              Аккаунт құру
+              {loading ? 'Жүктелуде...' : 'Аккаунт құру'}
             </button>
           </form>
 
           <p className="register-link">
-            Аккаунтың бар ма?{" "}
-            <a href="/login">Жүйеге кіру</a>
+            Аккаунтың бар ма? <Link to="/login">Жүйеге кіру</Link>
           </p>
         </div>
       </div>

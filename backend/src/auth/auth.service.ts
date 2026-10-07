@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UserRole } from '../generated/prisma/enums';
 
 @Injectable()
 export class AuthService {
@@ -38,14 +39,17 @@ export class AuthService {
       throw new ConflictException('Бұл email бұрын тіркелген');
     }
 
-    const existingPhone = await this.prisma.user.findUnique({
-      where: { phone },
-    });
+    if (phone) {
+      const existingPhone = await this.prisma.user.findUnique({
+        where: { phone },
+      });
 
-    if (existingPhone) {
-      throw new ConflictException('Бұл телефон нөмірі бұрын тіркелген');
+      if (existingPhone) {
+        throw new ConflictException('Бұл телефон нөмірі бұрын тіркелген');
+      }
     }
 
+    // Университет, факультет, мамандық байланысын тексеру
     const university = await this.prisma.university.findUnique({
       where: { id: universityId },
     });
@@ -82,28 +86,33 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
+    // Студент аккаунтын қауіпсіз құру (қоғамдық тіркелуде рөл қатаң түрде STUDENT)
     const user = await this.prisma.user.create({
       data: {
-        fullName,
-        email,
-        phone,
+        fullName: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone ? phone.trim() : null,
         passwordHash,
-        role: 'STUDENT',
+        role: UserRole.STUDENT,
         status: 'ACTIVE',
-
         studentProfile: {
           create: {
             universityId,
             facultyId,
             majorId,
-            course,
+            course: course || 1,
             premium: false,
           },
         },
       },
-
       include: {
-        studentProfile: true,
+        studentProfile: {
+          include: {
+            university: true,
+            faculty: true,
+            major: true,
+          },
+        },
       },
     });
 
@@ -124,10 +133,21 @@ export class AuthService {
     const { email, password } = loginDto;
 
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email: email.trim().toLowerCase() },
       include: {
-        studentProfile: true,
-        teacherProfile: true,
+        studentProfile: {
+          include: {
+            university: true,
+            faculty: true,
+            major: true,
+          },
+        },
+        teacherProfile: {
+          include: {
+            university: true,
+            faculty: true,
+          },
+        },
       },
     });
 
@@ -135,16 +155,16 @@ export class AuthService {
       throw new UnauthorizedException('Email немесе пароль қате');
     }
 
-    if (user.status !== 'ACTIVE') {
+    if (user.status === 'BLOCKED') {
       throw new UnauthorizedException('Бұл аккаунт бұғатталған');
     }
 
-    const passwordMatches = await bcrypt.compare(
+    const isPasswordValid = await bcrypt.compare(
       password,
       user.passwordHash,
     );
 
-    if (!passwordMatches) {
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Email немесе пароль қате');
     }
 
@@ -155,7 +175,7 @@ export class AuthService {
     });
 
     return {
-      message: 'Кіру сәтті орындалды',
+      message: 'Жүйеге сәтті кірдіңіз',
       accessToken,
       user: {
         id: user.id,

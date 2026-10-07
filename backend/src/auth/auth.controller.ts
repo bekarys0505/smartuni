@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,14 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('test-protected')
+  async getTestProtected() {
+    return {
+      message: 'JWT арқылы қорғалған endpoint жұмыс істеп тұр',
+    };
   }
 
   @UseGuards(JwtAuthGuard)

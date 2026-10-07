@@ -1,0 +1,86 @@
+/* ==========================================================================
+   SmartUni Design Tokens & Theme Variables
+   Academic, Modern, Professional, Clean
+   ========================================================================== */
+
+:root {
+  /* Brand / Primary Palette (Refined Academic Blues) */
+  --su-primary: #1565c0;
+  --su-primary-hover: #0d47a1;
+  --su-primary-active: #0a3880;
+  --su-primary-light: #e3f2fd;
+  --su-primary-subtle: #f0f7ff;
+  --su-primary-gradient: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
+  --su-primary-glow: rgba(21, 101, 192, 0.15);
+
+  /* Secondary Accent (Slate / Subtle Cobalt) */
+  --su-secondary: #475569;
+  --su-secondary-light: #f1f5f9;
+
+  /* Neutral Surface & Backgrounds */
+  --su-bg-app: #f8fafc;
+  --su-bg-surface: #ffffff;
+  --su-bg-surface-hover: #f1f5f9;
+  --su-bg-muted: #f1f5f9;
+  --su-bg-subtle: #f8fafc;
+
+  /* Borders & Dividers */
+  --su-border: #e2e8f0;
+  --su-border-light: #f1f5f9;
+  --su-border-strong: #cbd5e1;
+  --su-border-focus: #1565c0;
+
+  /* Typography / Text Colors */
+  --su-text-main: #0f172a;
+  --su-text-body: #334155;
+  --su-text-muted: #64748b;
+  --su-text-light: #94a3b8;
+  --su-text-inverse: #ffffff;
+
+  /* Semantic Status Colors */
+  --su-success: #16a34a;
+  --su-success-light: #dcfce7;
+  --su-success-text: #15803d;
+
+  --su-warning: #d97706;
+  --su-warning-light: #fef3c7;
+  --su-warning-text: #b45309;
+
+  --su-error: #dc2626;
+  --su-error-light: #fee2e2;
+  --su-error-text: #b91c1c;
+
+  --su-info: #0284c7;
+  --su-info-light: #e0f2fe;
+  --su-info-text: #0369a1;
+
+  /* Typography Scale */
+  --su-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --su-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Border Radii (Modern, soft, consistent) */
+  --su-radius-xs: 4px;
+  --su-radius-sm: 6px;
+  --su-radius-md: 10px;
+  --su-radius-lg: 14px;
+  --su-radius-xl: 18px;
+  --su-radius-full: 9999px;
+
+  /* Shadows (Subtle, crisp, no oversized dark shadows) */
+  --su-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --su-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --su-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --su-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --su-shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+
+  /* Layout Dimensions */
+  --su-header-height: 64px;
+  --su-sidebar-width: 260px;
+  --su-sidebar-width-collapsed: 72px;
+
+  /* Transitions */
+  --su-transition-fast: 150ms ease;
+  --su-transition-normal: 220ms ease;
+  --su-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+

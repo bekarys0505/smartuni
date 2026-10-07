@@ -41,3 +41,68 @@ export const GroupMembershipStatus = {
 } as const
 
 export type GroupMembershipStatus = (typeof GroupMembershipStatus)[keyof typeof GroupMembershipStatus]
+
+
+export const MaterialType = {
+  LECTURE: 'LECTURE',
+  VIDEO: 'VIDEO',
+  ADDITIONAL_RESOURCE: 'ADDITIONAL_RESOURCE'
+} as const
+
+export type MaterialType = (typeof MaterialType)[keyof typeof MaterialType]
+
+
+export const ProgressStatus = {
+  UNREAD: 'UNREAD',
+  STARTED: 'STARTED',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ProgressStatus = (typeof ProgressStatus)[keyof typeof ProgressStatus]
+
+
+export const AssignmentResponseType = {
+  TEXT: 'TEXT',
+  FILE: 'FILE',
+  TEXT_AND_FILE: 'TEXT_AND_FILE'
+} as const
+
+export type AssignmentResponseType = (typeof AssignmentResponseType)[keyof typeof AssignmentResponseType]
+
+
+export const AssignmentSubmissionStatus = {
+  NOT_SUBMITTED: 'NOT_SUBMITTED',
+  SUBMITTED: 'SUBMITTED',
+  GRADED: 'GRADED',
+  LATE: 'LATE'
+} as const
+
+export type AssignmentSubmissionStatus = (typeof AssignmentSubmissionStatus)[keyof typeof AssignmentSubmissionStatus]
+
+
+export const TestQuestionType = {
+  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  TRUE_FALSE: 'TRUE_FALSE',
+  OPEN_TEXT: 'OPEN_TEXT'
+} as const
+
+export type TestQuestionType = (typeof TestQuestionType)[keyof typeof TestQuestionType]
+
+
+export const TestStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type TestStatus = (typeof TestStatus)[keyof typeof TestStatus]
+
+
+export const TestAttemptStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type TestAttemptStatus = (typeof TestAttemptStatus)[keyof typeof TestAttemptStatus]

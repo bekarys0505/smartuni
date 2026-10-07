@@ -191,6 +191,8 @@ export type SubjectWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Subject"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subject"> | Date | string
   groups?: Prisma.GroupListRelationFilter
+  topics?: Prisma.TopicListRelationFilter
+  tests?: Prisma.TestListRelationFilter
 }
 
 export type SubjectOrderByWithRelationInput = {
@@ -201,6 +203,8 @@ export type SubjectOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   groups?: Prisma.GroupOrderByRelationAggregateInput
+  topics?: Prisma.TopicOrderByRelationAggregateInput
+  tests?: Prisma.TestOrderByRelationAggregateInput
 }
 
 export type SubjectWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +218,8 @@ export type SubjectWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Subject"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subject"> | Date | string
   groups?: Prisma.GroupListRelationFilter
+  topics?: Prisma.TopicListRelationFilter
+  tests?: Prisma.TestListRelationFilter
 }, "id">
 
 export type SubjectOrderByWithAggregationInput = {
@@ -248,6 +254,8 @@ export type SubjectCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   groups?: Prisma.GroupCreateNestedManyWithoutSubjectInput
+  topics?: Prisma.TopicCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestCreateNestedManyWithoutSubjectInput
 }
 
 export type SubjectUncheckedCreateInput = {
@@ -258,6 +266,8 @@ export type SubjectUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   groups?: Prisma.GroupUncheckedCreateNestedManyWithoutSubjectInput
+  topics?: Prisma.TopicUncheckedCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutSubjectInput
 }
 
 export type SubjectUpdateInput = {
@@ -268,6 +278,8 @@ export type SubjectUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.GroupUpdateManyWithoutSubjectNestedInput
+  topics?: Prisma.TopicUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUpdateManyWithoutSubjectNestedInput
 }
 
 export type SubjectUncheckedUpdateInput = {
@@ -278,6 +290,8 @@ export type SubjectUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.GroupUncheckedUpdateManyWithoutSubjectNestedInput
+  topics?: Prisma.TopicUncheckedUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutSubjectNestedInput
 }
 
 export type SubjectCreateManyInput = {
@@ -353,6 +367,34 @@ export type SubjectUpdateOneRequiredWithoutGroupsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SubjectUpdateToOneWithWhereWithoutGroupsInput, Prisma.SubjectUpdateWithoutGroupsInput>, Prisma.SubjectUncheckedUpdateWithoutGroupsInput>
 }
 
+export type SubjectCreateNestedOneWithoutTopicsInput = {
+  create?: Prisma.XOR<Prisma.SubjectCreateWithoutTopicsInput, Prisma.SubjectUncheckedCreateWithoutTopicsInput>
+  connectOrCreate?: Prisma.SubjectCreateOrConnectWithoutTopicsInput
+  connect?: Prisma.SubjectWhereUniqueInput
+}
+
+export type SubjectUpdateOneRequiredWithoutTopicsNestedInput = {
+  create?: Prisma.XOR<Prisma.SubjectCreateWithoutTopicsInput, Prisma.SubjectUncheckedCreateWithoutTopicsInput>
+  connectOrCreate?: Prisma.SubjectCreateOrConnectWithoutTopicsInput
+  upsert?: Prisma.SubjectUpsertWithoutTopicsInput
+  connect?: Prisma.SubjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SubjectUpdateToOneWithWhereWithoutTopicsInput, Prisma.SubjectUpdateWithoutTopicsInput>, Prisma.SubjectUncheckedUpdateWithoutTopicsInput>
+}
+
+export type SubjectCreateNestedOneWithoutTestsInput = {
+  create?: Prisma.XOR<Prisma.SubjectCreateWithoutTestsInput, Prisma.SubjectUncheckedCreateWithoutTestsInput>
+  connectOrCreate?: Prisma.SubjectCreateOrConnectWithoutTestsInput
+  connect?: Prisma.SubjectWhereUniqueInput
+}
+
+export type SubjectUpdateOneRequiredWithoutTestsNestedInput = {
+  create?: Prisma.XOR<Prisma.SubjectCreateWithoutTestsInput, Prisma.SubjectUncheckedCreateWithoutTestsInput>
+  connectOrCreate?: Prisma.SubjectCreateOrConnectWithoutTestsInput
+  upsert?: Prisma.SubjectUpsertWithoutTestsInput
+  connect?: Prisma.SubjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SubjectUpdateToOneWithWhereWithoutTestsInput, Prisma.SubjectUpdateWithoutTestsInput>, Prisma.SubjectUncheckedUpdateWithoutTestsInput>
+}
+
 export type SubjectCreateWithoutGroupsInput = {
   id?: string
   name: string
@@ -360,6 +402,8 @@ export type SubjectCreateWithoutGroupsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  topics?: Prisma.TopicCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestCreateNestedManyWithoutSubjectInput
 }
 
 export type SubjectUncheckedCreateWithoutGroupsInput = {
@@ -369,6 +413,8 @@ export type SubjectUncheckedCreateWithoutGroupsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  topics?: Prisma.TopicUncheckedCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutSubjectInput
 }
 
 export type SubjectCreateOrConnectWithoutGroupsInput = {
@@ -394,6 +440,8 @@ export type SubjectUpdateWithoutGroupsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  topics?: Prisma.TopicUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUpdateManyWithoutSubjectNestedInput
 }
 
 export type SubjectUncheckedUpdateWithoutGroupsInput = {
@@ -403,6 +451,128 @@ export type SubjectUncheckedUpdateWithoutGroupsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  topics?: Prisma.TopicUncheckedUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutSubjectNestedInput
+}
+
+export type SubjectCreateWithoutTopicsInput = {
+  id?: string
+  name: string
+  code?: string | null
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groups?: Prisma.GroupCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestCreateNestedManyWithoutSubjectInput
+}
+
+export type SubjectUncheckedCreateWithoutTopicsInput = {
+  id?: string
+  name: string
+  code?: string | null
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutSubjectInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutSubjectInput
+}
+
+export type SubjectCreateOrConnectWithoutTopicsInput = {
+  where: Prisma.SubjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubjectCreateWithoutTopicsInput, Prisma.SubjectUncheckedCreateWithoutTopicsInput>
+}
+
+export type SubjectUpsertWithoutTopicsInput = {
+  update: Prisma.XOR<Prisma.SubjectUpdateWithoutTopicsInput, Prisma.SubjectUncheckedUpdateWithoutTopicsInput>
+  create: Prisma.XOR<Prisma.SubjectCreateWithoutTopicsInput, Prisma.SubjectUncheckedCreateWithoutTopicsInput>
+  where?: Prisma.SubjectWhereInput
+}
+
+export type SubjectUpdateToOneWithWhereWithoutTopicsInput = {
+  where?: Prisma.SubjectWhereInput
+  data: Prisma.XOR<Prisma.SubjectUpdateWithoutTopicsInput, Prisma.SubjectUncheckedUpdateWithoutTopicsInput>
+}
+
+export type SubjectUpdateWithoutTopicsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.GroupUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUpdateManyWithoutSubjectNestedInput
+}
+
+export type SubjectUncheckedUpdateWithoutTopicsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutSubjectNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutSubjectNestedInput
+}
+
+export type SubjectCreateWithoutTestsInput = {
+  id?: string
+  name: string
+  code?: string | null
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groups?: Prisma.GroupCreateNestedManyWithoutSubjectInput
+  topics?: Prisma.TopicCreateNestedManyWithoutSubjectInput
+}
+
+export type SubjectUncheckedCreateWithoutTestsInput = {
+  id?: string
+  name: string
+  code?: string | null
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutSubjectInput
+  topics?: Prisma.TopicUncheckedCreateNestedManyWithoutSubjectInput
+}
+
+export type SubjectCreateOrConnectWithoutTestsInput = {
+  where: Prisma.SubjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubjectCreateWithoutTestsInput, Prisma.SubjectUncheckedCreateWithoutTestsInput>
+}
+
+export type SubjectUpsertWithoutTestsInput = {
+  update: Prisma.XOR<Prisma.SubjectUpdateWithoutTestsInput, Prisma.SubjectUncheckedUpdateWithoutTestsInput>
+  create: Prisma.XOR<Prisma.SubjectCreateWithoutTestsInput, Prisma.SubjectUncheckedCreateWithoutTestsInput>
+  where?: Prisma.SubjectWhereInput
+}
+
+export type SubjectUpdateToOneWithWhereWithoutTestsInput = {
+  where?: Prisma.SubjectWhereInput
+  data: Prisma.XOR<Prisma.SubjectUpdateWithoutTestsInput, Prisma.SubjectUncheckedUpdateWithoutTestsInput>
+}
+
+export type SubjectUpdateWithoutTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.GroupUpdateManyWithoutSubjectNestedInput
+  topics?: Prisma.TopicUpdateManyWithoutSubjectNestedInput
+}
+
+export type SubjectUncheckedUpdateWithoutTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutSubjectNestedInput
+  topics?: Prisma.TopicUncheckedUpdateManyWithoutSubjectNestedInput
 }
 
 
@@ -412,10 +582,14 @@ export type SubjectUncheckedUpdateWithoutGroupsInput = {
 
 export type SubjectCountOutputType = {
   groups: number
+  topics: number
+  tests: number
 }
 
 export type SubjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   groups?: boolean | SubjectCountOutputTypeCountGroupsArgs
+  topics?: boolean | SubjectCountOutputTypeCountTopicsArgs
+  tests?: boolean | SubjectCountOutputTypeCountTestsArgs
 }
 
 /**
@@ -435,6 +609,20 @@ export type SubjectCountOutputTypeCountGroupsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.GroupWhereInput
 }
 
+/**
+ * SubjectCountOutputType without action
+ */
+export type SubjectCountOutputTypeCountTopicsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TopicWhereInput
+}
+
+/**
+ * SubjectCountOutputType without action
+ */
+export type SubjectCountOutputTypeCountTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TestWhereInput
+}
+
 
 export type SubjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -444,6 +632,8 @@ export type SubjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   groups?: boolean | Prisma.Subject$groupsArgs<ExtArgs>
+  topics?: boolean | Prisma.Subject$topicsArgs<ExtArgs>
+  tests?: boolean | Prisma.Subject$testsArgs<ExtArgs>
   _count?: boolean | Prisma.SubjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subject"]>
 
@@ -477,6 +667,8 @@ export type SubjectSelectScalar = {
 export type SubjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["subject"]>
 export type SubjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   groups?: boolean | Prisma.Subject$groupsArgs<ExtArgs>
+  topics?: boolean | Prisma.Subject$topicsArgs<ExtArgs>
+  tests?: boolean | Prisma.Subject$testsArgs<ExtArgs>
   _count?: boolean | Prisma.SubjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SubjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -486,6 +678,8 @@ export type $SubjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Subject"
   objects: {
     groups: Prisma.$GroupPayload<ExtArgs>[]
+    topics: Prisma.$TopicPayload<ExtArgs>[]
+    tests: Prisma.$TestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -889,6 +1083,8 @@ readonly fields: SubjectFieldRefs;
 export interface Prisma__SubjectClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   groups<T extends Prisma.Subject$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subject$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  topics<T extends Prisma.Subject$topicsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subject$topicsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tests<T extends Prisma.Subject$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subject$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1338,6 +1534,54 @@ export type Subject$groupsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.GroupScalarFieldEnum | Prisma.GroupScalarFieldEnum[]
+}
+
+/**
+ * Subject.topics
+ */
+export type Subject$topicsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Topic
+   */
+  select?: Prisma.TopicSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Topic
+   */
+  omit?: Prisma.TopicOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TopicInclude<ExtArgs> | null
+  where?: Prisma.TopicWhereInput
+  orderBy?: Prisma.TopicOrderByWithRelationInput | Prisma.TopicOrderByWithRelationInput[]
+  cursor?: Prisma.TopicWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TopicScalarFieldEnum | Prisma.TopicScalarFieldEnum[]
+}
+
+/**
+ * Subject.tests
+ */
+export type Subject$testsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Test
+   */
+  select?: Prisma.TestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Test
+   */
+  omit?: Prisma.TestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TestInclude<ExtArgs> | null
+  where?: Prisma.TestWhereInput
+  orderBy?: Prisma.TestOrderByWithRelationInput | Prisma.TestOrderByWithRelationInput[]
+  cursor?: Prisma.TestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TestScalarFieldEnum | Prisma.TestScalarFieldEnum[]
 }
 
 /**

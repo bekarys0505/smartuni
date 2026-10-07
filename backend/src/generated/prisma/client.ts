@@ -89,3 +89,53 @@ export type GroupMembership = Prisma.GroupMembershipModel
  * 
  */
 export type JoinRequest = Prisma.JoinRequestModel
+/**
+ * Model Topic
+ * 
+ */
+export type Topic = Prisma.TopicModel
+/**
+ * Model Material
+ * 
+ */
+export type Material = Prisma.MaterialModel
+/**
+ * Model StudentMaterialProgress
+ * 
+ */
+export type StudentMaterialProgress = Prisma.StudentMaterialProgressModel
+/**
+ * Model Assignment
+ * 
+ */
+export type Assignment = Prisma.AssignmentModel
+/**
+ * Model AssignmentSubmission
+ * 
+ */
+export type AssignmentSubmission = Prisma.AssignmentSubmissionModel
+/**
+ * Model Test
+ * 
+ */
+export type Test = Prisma.TestModel
+/**
+ * Model TestQuestion
+ * 
+ */
+export type TestQuestion = Prisma.TestQuestionModel
+/**
+ * Model TestOption
+ * 
+ */
+export type TestOption = Prisma.TestOptionModel
+/**
+ * Model TestAttempt
+ * 
+ */
+export type TestAttempt = Prisma.TestAttemptModel
+/**
+ * Model TestAnswer
+ * 
+ */
+export type TestAnswer = Prisma.TestAnswerModel
