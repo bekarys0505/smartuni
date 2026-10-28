@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface TestResultItem {
   id: string;
@@ -81,14 +81,7 @@ export const TeacherTestResultsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}/results`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error('Нәтижелерді жүктеу қатесі');
-
-      const data = await res.json();
+      const data = await api.get<any>(`/api/teacher/tests/${testId}/results`);
       setTestInfo(data.test);
       setResults(data.results || []);
     } catch (err: any) {
@@ -106,14 +99,7 @@ export const TeacherTestResultsPage: React.FC = () => {
     try {
       setSelectedAttemptId(attemptId);
       setLoadingAttemptDetail(true);
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}/results/${attemptId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error('Студент жауаптарын алу сәтсіз');
-
-      const data = await res.json();
+      const data = await api.get<any>(`/api/teacher/tests/${testId}/results/${attemptId}`);
       setAttemptDetail(data.attempt);
     } catch (err: any) {
       alert(err.message);
@@ -131,26 +117,13 @@ export const TeacherTestResultsPage: React.FC = () => {
 
     try {
       setIsSavingGrade(true);
-      const token = getToken();
-      const res = await fetch(
+      await api.patch(
         `/api/teacher/tests/${testId}/results/${selectedAttemptId}/questions/${questionId}`,
         {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            score: Number(gradingScore),
-            comment: gradingComment.trim() || undefined,
-          }),
+          score: Number(gradingScore),
+          comment: gradingComment.trim() || undefined,
         }
       );
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Бағалау сәтсіз');
-      }
 
       alert('Баға сақталды және тест ұпайы қайта есептелді!');
       setGradingQuestionId(null);

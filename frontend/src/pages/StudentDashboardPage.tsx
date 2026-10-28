@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppShell } from '../components/layout/AppShell';
+import { api } from '../utils/api';
 
 type StudentData = {
   id: string;
@@ -157,89 +158,23 @@ export default function StudentDashboardPage() {
     async function loadDashboard() {
       try {
         const [
-          dashboardResponse,
-          subjectsResponse,
-          groupsResponse,
+          dashboardData,
+          subjectsData,
+          groupsData,
         ] = await Promise.all([
-          fetch(
-            `${import.meta.env.VITE_API_URL}/api/student/dashboard`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          ),
-
-          fetch(
-            `${import.meta.env.VITE_API_URL}/api/student/subjects`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          ),
-
-          fetch(
-            `${import.meta.env.VITE_API_URL}/api/student/groups`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          ),
+          api.get<DashboardResponse>('/api/student/dashboard'),
+          api.get<SubjectsResponse>('/api/student/subjects'),
+          api.get<GroupsResponse>('/api/student/groups'),
         ]);
 
-        const dashboardData =
-          await dashboardResponse.json();
+        setStudent(dashboardData.student);
 
-        const subjectsData =
-          await subjectsResponse.json();
-
-        const groupsData =
-          await groupsResponse.json();
-
-        if (!dashboardResponse.ok) {
-          throw new Error(
-            dashboardData?.message ||
-              'Dashboard деректерін алу мүмкін болмады',
-          );
+        if (dashboardData.progress) {
+          setProgress(dashboardData.progress);
         }
 
-        if (!subjectsResponse.ok) {
-          throw new Error(
-            subjectsData?.message ||
-              'Пәндер деректерін алу мүмкін болмады',
-          );
-        }
-
-        if (!groupsResponse.ok) {
-          throw new Error(
-            groupsData?.message ||
-              'Топтар деректерін алу мүмкін болмады',
-          );
-        }
-
-        setStudent(
-          (dashboardData as DashboardResponse)
-            .student,
-        );
-
-        if ((dashboardData as DashboardResponse).progress) {
-          setProgress((dashboardData as DashboardResponse).progress!);
-        }
-
-        setSubjects(
-          (subjectsData as SubjectsResponse)
-            .subjects,
-        );
-
-        setGroups(
-          (groupsData as GroupsResponse)
-            .groups,
-        );
+        setSubjects(subjectsData.subjects);
+        setGroups(groupsData.groups);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -274,24 +209,7 @@ export default function StudentDashboardPage() {
     setGroupError('');
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/student/groups/${groupId}/join`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ||
-            'Топқа қосылу өтінішін жіберу мүмкін болмады',
-        );
-      }
+      await api.post(`/api/student/groups/${groupId}/join`);
 
       setGroups((currentGroups) =>
         currentGroups.map((group) =>
@@ -354,7 +272,24 @@ export default function StudentDashboardPage() {
   }
 
   if (!student) {
-    return null;
+    return (
+      <div className="dashboard-error">
+        <div className="dashboard-error-card">
+          <div className="error-icon">!</div>
+
+          <h2>Студент мәліметтері қолжетімсіз</h2>
+
+          <p>Деректерді жүктеу сәтсіз аяқталды немесе сессия жарамсыз.</p>
+
+          <a
+            href="/login"
+            className="dashboard-login-button"
+          >
+            Жүйеге қайта кіру
+          </a>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -10,7 +10,7 @@ import {
   ErrorState,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface QuestionOption {
   id: string;
@@ -70,18 +70,7 @@ export const StudentTestTakingPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = getToken();
-      const res = await fetch(`/api/student/tests/${testId}/attempt/${attemptId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Тест мәліметтерін жүктеу мүмкін болмады');
-      }
-
-      const data = await res.json();
+      const data = await api.get<any>(`/api/student/tests/${testId}/attempt/${attemptId}`);
       setAttempt(data.attempt);
       setQuestions(data.questions || []);
 
@@ -113,6 +102,18 @@ export const StudentTestTakingPage: React.FC = () => {
     fetchAttempt();
   }, [testId, attemptId]);
 
+  const handleAutoSubmit = async () => {
+    if (autoSubmittedRef.current) return;
+    autoSubmittedRef.current = true;
+    try {
+      await api.post(`/api/student/tests/${testId}/attempt/${attemptId}/submit`);
+      alert('Тестке берілген уақыт аяқталды! Нәтиже автоматты түрде қабылданды.');
+      navigate(`/student/tests/${testId}/result/${attemptId}`);
+    } catch {
+      navigate(`/student/tests/${testId}/result/${attemptId}`);
+    }
+  };
+
   // Timer countdown
   useEffect(() => {
     if (timeLeftSeconds === null || timeLeftSeconds <= 0) return;
@@ -131,24 +132,6 @@ export const StudentTestTakingPage: React.FC = () => {
     return () => clearInterval(timer);
   }, [timeLeftSeconds]);
 
-  const handleAutoSubmit = async () => {
-    if (autoSubmittedRef.current) return;
-    autoSubmittedRef.current = true;
-    try {
-      const token = getToken();
-      await fetch(`/api/student/tests/${testId}/attempt/${attemptId}/submit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert('Тестке берілген уақыт аяқталды! Нәтиже автоматты түрде қабылданды.');
-      navigate(`/student/tests/${testId}/result/${attemptId}`);
-    } catch {
-      navigate(`/student/tests/${testId}/result/${attemptId}`);
-    }
-  };
-
   const syncCurrentQuestionState = (index: number) => {
     const q = questions[index];
     if (q) {
@@ -163,18 +146,10 @@ export const StudentTestTakingPage: React.FC = () => {
 
     try {
       setSavingAnswer(true);
-      const token = getToken();
-      await fetch(`/api/student/tests/${testId}/attempt/${attemptId}/answer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          questionId: currentQ.id,
-          selectedOptionIds: nextOptionIds,
-          textAnswer: nextText,
-        }),
+      await api.post(`/api/student/tests/${testId}/attempt/${attemptId}/answer`, {
+        questionId: currentQ.id,
+        selectedOptionIds: nextOptionIds,
+        textAnswer: nextText,
       });
 
       // Update in local memory
@@ -253,18 +228,7 @@ export const StudentTestTakingPage: React.FC = () => {
     try {
       setIsSubmitting(true);
       await handleSaveAnswer();
-      const token = getToken();
-      const res = await fetch(`/api/student/tests/${testId}/attempt/${attemptId}/submit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Тестті аяқтау сәтсіз болды');
-      }
-
+      await api.post(`/api/student/tests/${testId}/attempt/${attemptId}/submit`);
       setIsSubmitModalOpen(false);
       navigate(`/student/tests/${testId}/result/${attemptId}`);
     } catch (err: any) {

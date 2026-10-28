@@ -16,16 +16,22 @@ export class JwtAuthGuard implements CanActivate {
       Request & { user?: Record<string, unknown> }
     >();
 
+    let token: string | undefined;
     const authHeader = request.headers.authorization;
 
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization token қажет');
+    if (authHeader) {
+      const [type, t] = authHeader.split(' ');
+      if (type === 'Bearer' && t) {
+        token = t;
+      }
     }
 
-    const [type, token] = authHeader.split(' ');
+    if (!token && typeof request.query?.token === 'string') {
+      token = request.query.token;
+    }
 
-    if (type !== 'Bearer' || !token) {
-      throw new UnauthorizedException('Bearer token форматы қате');
+    if (!token) {
+      throw new UnauthorizedException('Authorization token қажет');
     }
 
     try {

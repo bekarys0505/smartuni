@@ -70,7 +70,9 @@ export const ModelName = {
   TestQuestion: 'TestQuestion',
   TestOption: 'TestOption',
   TestAttempt: 'TestAttempt',
-  TestAnswer: 'TestAnswer'
+  TestAnswer: 'TestAnswer',
+  AttendanceRecord: 'AttendanceRecord',
+  TermGrade: 'TermGrade'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -382,6 +384,38 @@ export const TestAnswerScalarFieldEnum = {
 } as const
 
 export type TestAnswerScalarFieldEnum = (typeof TestAnswerScalarFieldEnum)[keyof typeof TestAnswerScalarFieldEnum]
+
+
+export const AttendanceRecordScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  groupId: 'groupId',
+  date: 'date',
+  status: 'status',
+  markedByTeacherId: 'markedByTeacherId',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceRecordScalarFieldEnum = (typeof AttendanceRecordScalarFieldEnum)[keyof typeof AttendanceRecordScalarFieldEnum]
+
+
+export const TermGradeScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  groupId: 'groupId',
+  subjectId: 'subjectId',
+  rk1: 'rk1',
+  rk2: 'rk2',
+  session: 'session',
+  note: 'note',
+  markedByTeacherId: 'markedByTeacherId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TermGradeScalarFieldEnum = (typeof TermGradeScalarFieldEnum)[keyof typeof TermGradeScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -1,0 +1,401 @@
+/* ==========================================================================
+   SmartUni Profile & Settings Styling
+   Tokens & Clean Academic Theme
+   ========================================================================== */
+
+.su-profile-page {
+  padding: var(--su-spacing-6, 24px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.su-profile-header {
+  margin-bottom: var(--su-spacing-6, 24px);
+}
+
+.su-profile-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--su-text-main);
+  margin: 0 0 6px 0;
+}
+
+.su-profile-subtitle {
+  font-size: 0.95rem;
+  color: var(--su-text-muted);
+  margin: 0;
+}
+
+/* Hero / Overview Banner */
+.su-profile-hero {
+  background: var(--su-bg-surface);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-lg, 12px);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: var(--su-spacing-6, 24px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+.su-profile-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.su-profile-avatar-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--su-primary-light);
+  color: var(--su-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid var(--su-border);
+  overflow: hidden;
+}
+
+.su-profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.su-profile-hero-info h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--su-text-main);
+  margin: 0 0 6px 0;
+}
+
+.su-profile-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.su-profile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.su-role-STUDENT {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.su-role-TEACHER {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.su-role-ADMIN {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.su-profile-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--su-success-text);
+  background: var(--su-success-light);
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.su-profile-created-date {
+  font-size: 0.85rem;
+  color: var(--su-text-muted);
+}
+
+/* Tabs */
+.su-profile-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--su-border);
+  margin-bottom: var(--su-spacing-6, 24px);
+}
+
+.su-profile-tab-btn {
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--su-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.su-profile-tab-btn:hover {
+  color: var(--su-text-main);
+}
+
+.su-profile-tab-btn.active {
+  color: var(--su-primary);
+  border-bottom-color: var(--su-primary);
+}
+
+/* Layout Grid */
+.su-profile-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .su-profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card Section */
+.su-profile-card {
+  background: var(--su-bg-surface);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-lg, 12px);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.su-profile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--su-border-light);
+}
+
+.su-profile-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--su-text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+/* Key-Value details display */
+.su-profile-details-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.su-profile-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.su-profile-detail-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--su-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.su-profile-detail-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--su-text-main);
+  word-break: break-word;
+}
+
+.su-profile-detail-value.empty {
+  color: var(--su-text-light);
+  font-style: italic;
+}
+
+/* Editable Form */
+.su-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.su-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .su-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.su-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.su-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--su-text-main);
+}
+
+.su-form-group input,
+.su-form-group textarea,
+.su-form-group select {
+  padding: 10px 14px;
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-md, 8px);
+  background: var(--su-bg-surface);
+  font-size: 0.95rem;
+  color: var(--su-text-main);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.su-form-group input:focus,
+.su-form-group textarea:focus,
+.su-form-group select:focus {
+  outline: none;
+  border-color: var(--su-primary);
+  box-shadow: 0 0 0 3px var(--su-primary-glow);
+}
+
+.su-form-group input:disabled {
+  background: var(--su-bg-muted);
+  color: var(--su-text-muted);
+  cursor: not-allowed;
+}
+
+.su-form-hint {
+  font-size: 0.75rem;
+  color: var(--su-text-muted);
+}
+
+.su-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--su-border-light);
+}
+
+/* Group/Subject Pill List */
+.su-profile-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.su-profile-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--su-bg-muted);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-md, 8px);
+  font-size: 0.85rem;
+  color: var(--su-text-main);
+  font-weight: 500;
+}
+
+.su-profile-pill-code {
+  font-weight: 700;
+  color: var(--su-primary);
+}
+
+.su-profile-pill-meta {
+  font-size: 0.75rem;
+  color: var(--su-text-muted);
+}
+
+/* Password strength list */
+.su-pwd-requirements {
+  background: var(--su-bg-muted);
+  border-radius: var(--su-radius-md, 8px);
+  padding: 12px 16px;
+  margin-top: 6px;
+}
+
+.su-pwd-requirements p {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--su-text-body);
+  margin: 0 0 6px 0;
+}
+
+.su-pwd-requirements ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.75rem;
+  color: var(--su-text-muted);
+  line-height: 1.5;
+}
+
+/* Banners (Feedback) */
+.su-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: var(--su-radius-md, 8px);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.su-profile-banner--success {
+  background: var(--su-success-light);
+  color: var(--su-success-text);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.su-profile-banner--error {
+  background: var(--su-error-light);
+  color: var(--su-error-text);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Loading / Empty States */
+.su-profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  color: var(--su-text-muted);
+}
+
+.su-profile-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--su-text-muted);
+  font-size: 0.9rem;
+}
+

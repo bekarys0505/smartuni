@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface TeacherTestItem {
   id: string;
@@ -95,27 +95,16 @@ export const TeacherTestsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = getToken();
 
-      const [testsRes, subsRes] = await Promise.all([
-        fetch('/api/teacher/tests', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch('/api/teacher/subjects-and-topics', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+      const [testsData, subsData] = await Promise.all([
+        api.get<{ tests: TeacherTestItem[] }>('/api/teacher/tests'),
+        api.get<{ subjects: any[] }>('/api/teacher/subjects-and-topics').catch(() => ({ subjects: [] })),
       ]);
 
-      if (!testsRes.ok) throw new Error('Тесттер тізімін алу қатесі');
-      const testsData = await testsRes.json();
       setTests(testsData.tests || []);
-
-      if (subsRes.ok) {
-        const subsData = await subsRes.json();
-        setSubjects(subsData.subjects || []);
-        if (subsData.subjects && subsData.subjects.length > 0 && !createSubjectId) {
-          setCreateSubjectId(subsData.subjects[0].id);
-        }
+      setSubjects(subsData.subjects || []);
+      if (subsData.subjects && subsData.subjects.length > 0 && !createSubjectId) {
+        setCreateSubjectId(subsData.subjects[0].id);
       }
     } catch (err: any) {
       setError(err.message || 'Сервер қатесі');
@@ -137,29 +126,16 @@ export const TeacherTestsPage: React.FC = () => {
 
     try {
       setIsCreating(true);
-      const token = getToken();
-      const res = await fetch('/api/teacher/tests', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          subjectId: createSubjectId,
-          topicId: createTopicId || null,
-          title: createTitle.trim(),
-          description: createDescription.trim() || null,
-          durationMinutes: Number(createDuration),
-          shuffleQuestions: createShuffleQuestions,
-          shuffleAnswers: createShuffleAnswers,
-          showResultsImmediately: createShowResults,
-        }),
+      await api.post('/api/teacher/tests', {
+        subjectId: createSubjectId,
+        topicId: createTopicId || null,
+        title: createTitle.trim(),
+        description: createDescription.trim() || null,
+        durationMinutes: Number(createDuration),
+        shuffleQuestions: createShuffleQuestions,
+        shuffleAnswers: createShuffleAnswers,
+        showResultsImmediately: createShowResults,
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Тест жасау сәтсіз');
-      }
 
       setIsCreateModalOpen(false);
       setCreateTitle('');
@@ -176,12 +152,7 @@ export const TeacherTestsPage: React.FC = () => {
     try {
       setLoadingTestDetails(true);
       setIsQuestionsModalOpen(true);
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Тест мәліметтерін алу мүмкін болмады');
-      const data = await res.json();
+      const data = await api.get<{ test: any }>(`/api/teacher/tests/${testId}`);
       setSelectedTest(data.test);
       resetNewQuestionForm();
     } catch (err: any) {
@@ -224,26 +195,13 @@ export const TeacherTestsPage: React.FC = () => {
 
     try {
       setIsAddingQuestion(true);
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${selectedTest.id}/questions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          type: newQuestionType,
-          questionText: newQuestionText.trim(),
-          points: Number(newQuestionPoints),
-          explanation: newQuestionExplanation.trim() || undefined,
-          options: payloadOptions,
-        }),
+      await api.post(`/api/teacher/tests/${selectedTest.id}/questions`, {
+        type: newQuestionType,
+        questionText: newQuestionText.trim(),
+        points: Number(newQuestionPoints),
+        explanation: newQuestionExplanation.trim() || undefined,
+        options: payloadOptions,
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Сұрақ қосу сәтсіз');
-      }
 
       // Reload test details
       handleOpenQuestionsModal(selectedTest.id);
@@ -258,12 +216,7 @@ export const TeacherTestsPage: React.FC = () => {
   const handleDeleteQuestion = async (questionId: string) => {
     if (!selectedTest || !confirm('Бұл сұрақты өшіруді растайсыз ба?')) return;
     try {
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${selectedTest.id}/questions/${questionId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Сұрақты өшіру сәтсіз');
+      await api.delete(`/api/teacher/tests/${selectedTest.id}/questions/${questionId}`);
       handleOpenQuestionsModal(selectedTest.id);
       fetchTestsAndSubjects();
     } catch (err: any) {
@@ -274,15 +227,7 @@ export const TeacherTestsPage: React.FC = () => {
   const handlePublishTest = async (testId: string) => {
     if (!confirm('Бұл тестті жариялауды растайсыз ба? Ол студенттерге көрінеді.')) return;
     try {
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}/publish`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Жариялау сәтсіз');
-      }
+      await api.post(`/api/teacher/tests/${testId}/publish`);
       alert('Тест сәтті жарияланды!');
       fetchTestsAndSubjects();
       if (isQuestionsModalOpen) setIsQuestionsModalOpen(false);
@@ -294,12 +239,7 @@ export const TeacherTestsPage: React.FC = () => {
   const handleArchiveTest = async (testId: string) => {
     if (!confirm('Бұл тестті мұрағаттауды растайсыз ба?')) return;
     try {
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}/archive`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Мұрағаттау сәтсіз');
+      await api.post(`/api/teacher/tests/${testId}/archive`);
       fetchTestsAndSubjects();
     } catch (err: any) {
       alert(err.message);
@@ -309,12 +249,7 @@ export const TeacherTestsPage: React.FC = () => {
   const handleDeleteTest = async (testId: string) => {
     if (!confirm('Бұл тестті толық өшіруді растайсыз ба? Барлық сұрақтар мен нәтижелер өшеді.')) return;
     try {
-      const token = getToken();
-      const res = await fetch(`/api/teacher/tests/${testId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Өшіру сәтсіз');
+      await api.delete(`/api/teacher/tests/${testId}`);
       fetchTestsAndSubjects();
     } catch (err: any) {
       alert(err.message);

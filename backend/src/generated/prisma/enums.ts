@@ -106,3 +106,13 @@ export const TestAttemptStatus = {
 } as const
 
 export type TestAttemptStatus = (typeof TestAttemptStatus)[keyof typeof TestAttemptStatus]
+
+
+export const AttendanceStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  EXCUSED: 'EXCUSED'
+} as const
+
+export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]

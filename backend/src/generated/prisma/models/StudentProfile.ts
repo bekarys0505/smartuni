@@ -265,6 +265,8 @@ export type StudentProfileWhereInput = {
   materialProgresses?: Prisma.StudentMaterialProgressListRelationFilter
   assignmentSubmissions?: Prisma.AssignmentSubmissionListRelationFilter
   testAttempts?: Prisma.TestAttemptListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
+  termGrades?: Prisma.TermGradeListRelationFilter
 }
 
 export type StudentProfileOrderByWithRelationInput = {
@@ -287,6 +289,8 @@ export type StudentProfileOrderByWithRelationInput = {
   materialProgresses?: Prisma.StudentMaterialProgressOrderByRelationAggregateInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionOrderByRelationAggregateInput
   testAttempts?: Prisma.TestAttemptOrderByRelationAggregateInput
+  attendanceRecords?: Prisma.AttendanceRecordOrderByRelationAggregateInput
+  termGrades?: Prisma.TermGradeOrderByRelationAggregateInput
 }
 
 export type StudentProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -312,6 +316,8 @@ export type StudentProfileWhereUniqueInput = Prisma.AtLeast<{
   materialProgresses?: Prisma.StudentMaterialProgressListRelationFilter
   assignmentSubmissions?: Prisma.AssignmentSubmissionListRelationFilter
   testAttempts?: Prisma.TestAttemptListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
+  termGrades?: Prisma.TermGradeListRelationFilter
 }, "id" | "userId">
 
 export type StudentProfileOrderByWithAggregationInput = {
@@ -364,6 +370,8 @@ export type StudentProfileCreateInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateInput = {
@@ -382,6 +390,8 @@ export type StudentProfileUncheckedCreateInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUpdateInput = {
@@ -400,6 +410,8 @@ export type StudentProfileUpdateInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateInput = {
@@ -418,6 +430,8 @@ export type StudentProfileUncheckedUpdateInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateManyInput = {
@@ -758,6 +772,34 @@ export type StudentProfileUpdateOneRequiredWithoutTestAttemptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentProfileUpdateToOneWithWhereWithoutTestAttemptsInput, Prisma.StudentProfileUpdateWithoutTestAttemptsInput>, Prisma.StudentProfileUncheckedUpdateWithoutTestAttemptsInput>
 }
 
+export type StudentProfileCreateNestedOneWithoutAttendanceRecordsInput = {
+  create?: Prisma.XOR<Prisma.StudentProfileCreateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.StudentProfileCreateOrConnectWithoutAttendanceRecordsInput
+  connect?: Prisma.StudentProfileWhereUniqueInput
+}
+
+export type StudentProfileUpdateOneRequiredWithoutAttendanceRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentProfileCreateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.StudentProfileCreateOrConnectWithoutAttendanceRecordsInput
+  upsert?: Prisma.StudentProfileUpsertWithoutAttendanceRecordsInput
+  connect?: Prisma.StudentProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentProfileUpdateToOneWithWhereWithoutAttendanceRecordsInput, Prisma.StudentProfileUpdateWithoutAttendanceRecordsInput>, Prisma.StudentProfileUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type StudentProfileCreateNestedOneWithoutTermGradesInput = {
+  create?: Prisma.XOR<Prisma.StudentProfileCreateWithoutTermGradesInput, Prisma.StudentProfileUncheckedCreateWithoutTermGradesInput>
+  connectOrCreate?: Prisma.StudentProfileCreateOrConnectWithoutTermGradesInput
+  connect?: Prisma.StudentProfileWhereUniqueInput
+}
+
+export type StudentProfileUpdateOneRequiredWithoutTermGradesNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentProfileCreateWithoutTermGradesInput, Prisma.StudentProfileUncheckedCreateWithoutTermGradesInput>
+  connectOrCreate?: Prisma.StudentProfileCreateOrConnectWithoutTermGradesInput
+  upsert?: Prisma.StudentProfileUpsertWithoutTermGradesInput
+  connect?: Prisma.StudentProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentProfileUpdateToOneWithWhereWithoutTermGradesInput, Prisma.StudentProfileUpdateWithoutTermGradesInput>, Prisma.StudentProfileUncheckedUpdateWithoutTermGradesInput>
+}
+
 export type StudentProfileCreateWithoutUserInput = {
   id?: string
   course: number
@@ -773,6 +815,8 @@ export type StudentProfileCreateWithoutUserInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutUserInput = {
@@ -790,6 +834,8 @@ export type StudentProfileUncheckedCreateWithoutUserInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutUserInput = {
@@ -823,6 +869,8 @@ export type StudentProfileUpdateWithoutUserInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutUserInput = {
@@ -840,6 +888,8 @@ export type StudentProfileUncheckedUpdateWithoutUserInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateWithoutUniversityInput = {
@@ -857,6 +907,8 @@ export type StudentProfileCreateWithoutUniversityInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutUniversityInput = {
@@ -874,6 +926,8 @@ export type StudentProfileUncheckedCreateWithoutUniversityInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutUniversityInput = {
@@ -933,6 +987,8 @@ export type StudentProfileCreateWithoutFacultyInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutFacultyInput = {
@@ -950,6 +1006,8 @@ export type StudentProfileUncheckedCreateWithoutFacultyInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutFacultyInput = {
@@ -993,6 +1051,8 @@ export type StudentProfileCreateWithoutMajorInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutMajorInput = {
@@ -1010,6 +1070,8 @@ export type StudentProfileUncheckedCreateWithoutMajorInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutMajorInput = {
@@ -1053,6 +1115,8 @@ export type StudentProfileCreateWithoutMembershipsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutMembershipsInput = {
@@ -1070,6 +1134,8 @@ export type StudentProfileUncheckedCreateWithoutMembershipsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutMembershipsInput = {
@@ -1103,6 +1169,8 @@ export type StudentProfileUpdateWithoutMembershipsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutMembershipsInput = {
@@ -1120,6 +1188,8 @@ export type StudentProfileUncheckedUpdateWithoutMembershipsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateWithoutJoinRequestsInput = {
@@ -1137,6 +1207,8 @@ export type StudentProfileCreateWithoutJoinRequestsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutJoinRequestsInput = {
@@ -1154,6 +1226,8 @@ export type StudentProfileUncheckedCreateWithoutJoinRequestsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutJoinRequestsInput = {
@@ -1187,6 +1261,8 @@ export type StudentProfileUpdateWithoutJoinRequestsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutJoinRequestsInput = {
@@ -1204,6 +1280,8 @@ export type StudentProfileUncheckedUpdateWithoutJoinRequestsInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateWithoutMaterialProgressesInput = {
@@ -1221,6 +1299,8 @@ export type StudentProfileCreateWithoutMaterialProgressesInput = {
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutMaterialProgressesInput = {
@@ -1238,6 +1318,8 @@ export type StudentProfileUncheckedCreateWithoutMaterialProgressesInput = {
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutMaterialProgressesInput = {
@@ -1271,6 +1353,8 @@ export type StudentProfileUpdateWithoutMaterialProgressesInput = {
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutMaterialProgressesInput = {
@@ -1288,6 +1372,8 @@ export type StudentProfileUncheckedUpdateWithoutMaterialProgressesInput = {
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateWithoutAssignmentSubmissionsInput = {
@@ -1305,6 +1391,8 @@ export type StudentProfileCreateWithoutAssignmentSubmissionsInput = {
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutStudentInput
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutAssignmentSubmissionsInput = {
@@ -1322,6 +1410,8 @@ export type StudentProfileUncheckedCreateWithoutAssignmentSubmissionsInput = {
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutStudentInput
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutAssignmentSubmissionsInput = {
@@ -1355,6 +1445,8 @@ export type StudentProfileUpdateWithoutAssignmentSubmissionsInput = {
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutStudentNestedInput
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutAssignmentSubmissionsInput = {
@@ -1372,6 +1464,8 @@ export type StudentProfileUncheckedUpdateWithoutAssignmentSubmissionsInput = {
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutStudentNestedInput
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateWithoutTestAttemptsInput = {
@@ -1389,6 +1483,8 @@ export type StudentProfileCreateWithoutTestAttemptsInput = {
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutStudentInput
   materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileUncheckedCreateWithoutTestAttemptsInput = {
@@ -1406,6 +1502,8 @@ export type StudentProfileUncheckedCreateWithoutTestAttemptsInput = {
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutStudentInput
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentProfileCreateOrConnectWithoutTestAttemptsInput = {
@@ -1439,6 +1537,8 @@ export type StudentProfileUpdateWithoutTestAttemptsInput = {
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutStudentNestedInput
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutTestAttemptsInput = {
@@ -1456,6 +1556,192 @@ export type StudentProfileUncheckedUpdateWithoutTestAttemptsInput = {
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutStudentNestedInput
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentProfileCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  course: number
+  avatarUrl?: string | null
+  premium?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  university: Prisma.UniversityCreateNestedOneWithoutStudentsInput
+  faculty: Prisma.FacultyCreateNestedOneWithoutStudentsInput
+  major: Prisma.MajorCreateNestedOneWithoutStudentsInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutStudentInput
+  materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
+  testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutStudentInput
+}
+
+export type StudentProfileUncheckedCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  userId: string
+  universityId: string
+  facultyId: string
+  majorId: string
+  course: number
+  avatarUrl?: string | null
+  premium?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutStudentInput
+  materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
+  testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentProfileCreateOrConnectWithoutAttendanceRecordsInput = {
+  where: Prisma.StudentProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentProfileCreateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedCreateWithoutAttendanceRecordsInput>
+}
+
+export type StudentProfileUpsertWithoutAttendanceRecordsInput = {
+  update: Prisma.XOR<Prisma.StudentProfileUpdateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedUpdateWithoutAttendanceRecordsInput>
+  create: Prisma.XOR<Prisma.StudentProfileCreateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedCreateWithoutAttendanceRecordsInput>
+  where?: Prisma.StudentProfileWhereInput
+}
+
+export type StudentProfileUpdateToOneWithWhereWithoutAttendanceRecordsInput = {
+  where?: Prisma.StudentProfileWhereInput
+  data: Prisma.XOR<Prisma.StudentProfileUpdateWithoutAttendanceRecordsInput, Prisma.StudentProfileUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type StudentProfileUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  premium?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutStudentProfileNestedInput
+  university?: Prisma.UniversityUpdateOneRequiredWithoutStudentsNestedInput
+  faculty?: Prisma.FacultyUpdateOneRequiredWithoutStudentsNestedInput
+  major?: Prisma.MajorUpdateOneRequiredWithoutStudentsNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  joinRequests?: Prisma.JoinRequestUpdateManyWithoutStudentNestedInput
+  materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
+  testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentProfileUncheckedUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  universityId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.StringFieldUpdateOperationsInput | string
+  majorId?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  premium?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutStudentNestedInput
+  materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentProfileCreateWithoutTermGradesInput = {
+  id?: string
+  course: number
+  avatarUrl?: string | null
+  premium?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  university: Prisma.UniversityCreateNestedOneWithoutStudentsInput
+  faculty: Prisma.FacultyCreateNestedOneWithoutStudentsInput
+  major: Prisma.MajorCreateNestedOneWithoutStudentsInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutStudentInput
+  materialProgresses?: Prisma.StudentMaterialProgressCreateNestedManyWithoutStudentInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionCreateNestedManyWithoutStudentInput
+  testAttempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutStudentInput
+}
+
+export type StudentProfileUncheckedCreateWithoutTermGradesInput = {
+  id?: string
+  userId: string
+  universityId: string
+  facultyId: string
+  majorId: string
+  course: number
+  avatarUrl?: string | null
+  premium?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutStudentInput
+  materialProgresses?: Prisma.StudentMaterialProgressUncheckedCreateNestedManyWithoutStudentInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedCreateNestedManyWithoutStudentInput
+  testAttempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentProfileCreateOrConnectWithoutTermGradesInput = {
+  where: Prisma.StudentProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentProfileCreateWithoutTermGradesInput, Prisma.StudentProfileUncheckedCreateWithoutTermGradesInput>
+}
+
+export type StudentProfileUpsertWithoutTermGradesInput = {
+  update: Prisma.XOR<Prisma.StudentProfileUpdateWithoutTermGradesInput, Prisma.StudentProfileUncheckedUpdateWithoutTermGradesInput>
+  create: Prisma.XOR<Prisma.StudentProfileCreateWithoutTermGradesInput, Prisma.StudentProfileUncheckedCreateWithoutTermGradesInput>
+  where?: Prisma.StudentProfileWhereInput
+}
+
+export type StudentProfileUpdateToOneWithWhereWithoutTermGradesInput = {
+  where?: Prisma.StudentProfileWhereInput
+  data: Prisma.XOR<Prisma.StudentProfileUpdateWithoutTermGradesInput, Prisma.StudentProfileUncheckedUpdateWithoutTermGradesInput>
+}
+
+export type StudentProfileUpdateWithoutTermGradesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  premium?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutStudentProfileNestedInput
+  university?: Prisma.UniversityUpdateOneRequiredWithoutStudentsNestedInput
+  faculty?: Prisma.FacultyUpdateOneRequiredWithoutStudentsNestedInput
+  major?: Prisma.MajorUpdateOneRequiredWithoutStudentsNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  joinRequests?: Prisma.JoinRequestUpdateManyWithoutStudentNestedInput
+  materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
+  testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentProfileUncheckedUpdateWithoutTermGradesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  universityId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.StringFieldUpdateOperationsInput | string
+  majorId?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  premium?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutStudentNestedInput
+  materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
+  assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileCreateManyUniversityInput = {
@@ -1485,6 +1771,8 @@ export type StudentProfileUpdateWithoutUniversityInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutUniversityInput = {
@@ -1502,6 +1790,8 @@ export type StudentProfileUncheckedUpdateWithoutUniversityInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateManyWithoutUniversityInput = {
@@ -1543,6 +1833,8 @@ export type StudentProfileUpdateWithoutFacultyInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutFacultyInput = {
@@ -1560,6 +1852,8 @@ export type StudentProfileUncheckedUpdateWithoutFacultyInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateManyWithoutFacultyInput = {
@@ -1601,6 +1895,8 @@ export type StudentProfileUpdateWithoutMajorInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateWithoutMajorInput = {
@@ -1618,6 +1914,8 @@ export type StudentProfileUncheckedUpdateWithoutMajorInput = {
   materialProgresses?: Prisma.StudentMaterialProgressUncheckedUpdateManyWithoutStudentNestedInput
   assignmentSubmissions?: Prisma.AssignmentSubmissionUncheckedUpdateManyWithoutStudentNestedInput
   testAttempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutStudentNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentProfileUncheckedUpdateManyWithoutMajorInput = {
@@ -1643,6 +1941,8 @@ export type StudentProfileCountOutputType = {
   materialProgresses: number
   assignmentSubmissions: number
   testAttempts: number
+  attendanceRecords: number
+  termGrades: number
 }
 
 export type StudentProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1651,6 +1951,8 @@ export type StudentProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   materialProgresses?: boolean | StudentProfileCountOutputTypeCountMaterialProgressesArgs
   assignmentSubmissions?: boolean | StudentProfileCountOutputTypeCountAssignmentSubmissionsArgs
   testAttempts?: boolean | StudentProfileCountOutputTypeCountTestAttemptsArgs
+  attendanceRecords?: boolean | StudentProfileCountOutputTypeCountAttendanceRecordsArgs
+  termGrades?: boolean | StudentProfileCountOutputTypeCountTermGradesArgs
 }
 
 /**
@@ -1698,6 +2000,20 @@ export type StudentProfileCountOutputTypeCountTestAttemptsArgs<ExtArgs extends r
   where?: Prisma.TestAttemptWhereInput
 }
 
+/**
+ * StudentProfileCountOutputType without action
+ */
+export type StudentProfileCountOutputTypeCountAttendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceRecordWhereInput
+}
+
+/**
+ * StudentProfileCountOutputType without action
+ */
+export type StudentProfileCountOutputTypeCountTermGradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TermGradeWhereInput
+}
+
 
 export type StudentProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1719,6 +2035,8 @@ export type StudentProfileSelect<ExtArgs extends runtime.Types.Extensions.Intern
   materialProgresses?: boolean | Prisma.StudentProfile$materialProgressesArgs<ExtArgs>
   assignmentSubmissions?: boolean | Prisma.StudentProfile$assignmentSubmissionsArgs<ExtArgs>
   testAttempts?: boolean | Prisma.StudentProfile$testAttemptsArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.StudentProfile$attendanceRecordsArgs<ExtArgs>
+  termGrades?: boolean | Prisma.StudentProfile$termGradesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["studentProfile"]>
 
@@ -1780,6 +2098,8 @@ export type StudentProfileInclude<ExtArgs extends runtime.Types.Extensions.Inter
   materialProgresses?: boolean | Prisma.StudentProfile$materialProgressesArgs<ExtArgs>
   assignmentSubmissions?: boolean | Prisma.StudentProfile$assignmentSubmissionsArgs<ExtArgs>
   testAttempts?: boolean | Prisma.StudentProfile$testAttemptsArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.StudentProfile$attendanceRecordsArgs<ExtArgs>
+  termGrades?: boolean | Prisma.StudentProfile$termGradesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1807,6 +2127,8 @@ export type $StudentProfilePayload<ExtArgs extends runtime.Types.Extensions.Inte
     materialProgresses: Prisma.$StudentMaterialProgressPayload<ExtArgs>[]
     assignmentSubmissions: Prisma.$AssignmentSubmissionPayload<ExtArgs>[]
     testAttempts: Prisma.$TestAttemptPayload<ExtArgs>[]
+    attendanceRecords: Prisma.$AttendanceRecordPayload<ExtArgs>[]
+    termGrades: Prisma.$TermGradePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2222,6 +2544,8 @@ export interface Prisma__StudentProfileClient<T, Null = never, ExtArgs extends r
   materialProgresses<T extends Prisma.StudentProfile$materialProgressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentProfile$materialProgressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentMaterialProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignmentSubmissions<T extends Prisma.StudentProfile$assignmentSubmissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentProfile$assignmentSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   testAttempts<T extends Prisma.StudentProfile$testAttemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentProfile$testAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceRecords<T extends Prisma.StudentProfile$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentProfile$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  termGrades<T extends Prisma.StudentProfile$termGradesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentProfile$termGradesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TermGradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2779,6 +3103,54 @@ export type StudentProfile$testAttemptsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.TestAttemptScalarFieldEnum | Prisma.TestAttemptScalarFieldEnum[]
+}
+
+/**
+ * StudentProfile.attendanceRecords
+ */
+export type StudentProfile$attendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceRecord
+   */
+  select?: Prisma.AttendanceRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceRecord
+   */
+  omit?: Prisma.AttendanceRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceRecordInclude<ExtArgs> | null
+  where?: Prisma.AttendanceRecordWhereInput
+  orderBy?: Prisma.AttendanceRecordOrderByWithRelationInput | Prisma.AttendanceRecordOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceRecordScalarFieldEnum | Prisma.AttendanceRecordScalarFieldEnum[]
+}
+
+/**
+ * StudentProfile.termGrades
+ */
+export type StudentProfile$termGradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TermGrade
+   */
+  select?: Prisma.TermGradeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TermGrade
+   */
+  omit?: Prisma.TermGradeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TermGradeInclude<ExtArgs> | null
+  where?: Prisma.TermGradeWhereInput
+  orderBy?: Prisma.TermGradeOrderByWithRelationInput | Prisma.TermGradeOrderByWithRelationInput[]
+  cursor?: Prisma.TermGradeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TermGradeScalarFieldEnum | Prisma.TermGradeScalarFieldEnum[]
 }
 
 /**

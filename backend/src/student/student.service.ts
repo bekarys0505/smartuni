@@ -8,6 +8,13 @@ import {
 
 import { PrismaService } from '../prisma/prisma.service';
 import { ProgressService } from './progress.service';
+import {
+  calculateAdmissionRating,
+  calculateFinalScore,
+  getGradeLetter,
+  getGradeStatus,
+  getGpaPoints,
+} from '../common/grading.util';
 
 @Injectable()
 export class StudentService {
@@ -618,6 +625,137 @@ export class StudentService {
     };
   }
 
+  async getMaterials(
+    userId?: string,
+    query?: {
+      subjectId?: string;
+      type?: string;
+      search?: string;
+    },
+  ) {
+    const student = await this.getStudentProfile(userId);
+
+    // 1. Get active memberships and allowed subjects
+    const memberships = await this.prisma.groupMembership.findMany({
+      where: {
+        studentId: student.id,
+        status: 'ACTIVE',
+        group: {
+          status: 'ACTIVE',
+        },
+      },
+      include: {
+        group: {
+          include: {
+            subject: true,
+          },
+        },
+      },
+    });
+
+    const subjectsMap = new Map<string, { id: string; name: string; code: string | null }>();
+    memberships.forEach((m) => {
+      const s = m.group.subject;
+      if (!subjectsMap.has(s.id)) {
+        subjectsMap.set(s.id, {
+          id: s.id,
+          name: s.name,
+          code: s.code,
+        });
+      }
+    });
+
+    const allowedSubjectIds = Array.from(subjectsMap.keys());
+    if (allowedSubjectIds.length === 0) {
+      return {
+        message: 'Оқу материалдары',
+        materials: [],
+        subjects: [],
+      };
+    }
+
+    // 2. Validate requested subjectId if provided
+    let targetSubjectIds = allowedSubjectIds;
+    if (query?.subjectId) {
+      if (!allowedSubjectIds.includes(query.subjectId)) {
+        throw new ForbiddenException('Бұл пәннің материалдарын көруге рұқсатыңыз жоқ');
+      }
+      targetSubjectIds = [query.subjectId];
+    }
+
+    // 3. Build Prisma where clause
+    const where: any = {
+      topic: {
+        subjectId: { in: targetSubjectIds },
+      },
+    };
+
+    if (query?.type && ['LECTURE', 'VIDEO', 'ADDITIONAL_RESOURCE'].includes(query.type)) {
+      where.type = query.type;
+    }
+
+    if (query?.search && query.search.trim()) {
+      const q = query.search.trim();
+      where.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+      ];
+    }
+
+    const materials = await this.prisma.material.findMany({
+      where,
+      include: {
+        topic: {
+          include: {
+            subject: true,
+          },
+        },
+        progresses: {
+          where: {
+            studentId: student.id,
+          },
+        },
+      },
+      orderBy: [
+        { topic: { order: 'asc' } },
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
+    });
+
+    const formattedMaterials = materials.map((m) => {
+      const progress = m.progresses[0];
+      return {
+        id: m.id,
+        title: m.title,
+        description: m.description,
+        type: m.type,
+        contentUrl: m.contentUrl,
+        hasTextContent: Boolean(m.contentText),
+        order: m.order,
+        createdAt: m.createdAt,
+        updatedAt: m.updatedAt,
+        status: progress ? progress.status : 'UNREAD',
+        topic: {
+          id: m.topic.id,
+          title: m.topic.title,
+          order: m.topic.order,
+        },
+        subject: {
+          id: m.topic.subject.id,
+          name: m.topic.subject.name,
+          code: m.topic.subject.code,
+        },
+      };
+    });
+
+    return {
+      message: 'Оқу материалдарының тізімі',
+      materials: formattedMaterials,
+      subjects: Array.from(subjectsMap.values()),
+    };
+  }
+
   async getMaterialDetails(userId: string | undefined, materialId: string) {
     const student = await this.getStudentProfile(userId);
 
@@ -1009,6 +1147,22 @@ export class StudentService {
       if (dangerous.includes(ext) || !allowed.includes(ext)) {
         throw new BadRequestException('Қабылданбайтын файл түрі. Тек PDF, DOC, DOCX, JPG, PNG рұқсат етілген.');
       }
+    }
+
+    // Verify existing submission status to prevent overwriting graded submissions
+    const existingSubmission = await this.prisma.assignmentSubmission.findUnique({
+      where: {
+        assignmentId_studentId: {
+          assignmentId: assignment.id,
+          studentId: student.id,
+        },
+      },
+    });
+
+    if (existingSubmission && existingSubmission.status === 'GRADED') {
+      throw new BadRequestException(
+        'Тапсырма бұрын бағаланған. Бағаланған тапсырманы қайта тапсыру мүмкін емес.',
+      );
     }
 
     const submission = await this.prisma.assignmentSubmission.upsert({
@@ -1791,6 +1945,144 @@ export class StudentService {
       message: 'Тест қателерін талдау',
       showResultsImmediately: true,
       errors,
+    };
+  }
+
+  // ==========================================
+  // ACADEMIC TERM GRADES (RK-1, RK-2, SESSION)
+  // ==========================================
+
+  async getStudentGrades(userId?: string) {
+    const student = await this.getStudentProfile(userId);
+
+    const memberships = await this.prisma.groupMembership.findMany({
+      where: {
+        studentId: student.id,
+        status: 'ACTIVE',
+        group: {
+          status: 'ACTIVE',
+        },
+      },
+      include: {
+        group: {
+          include: {
+            subject: true,
+            teacher: {
+              include: {
+                user: {
+                  select: {
+                    fullName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        joinedAt: 'desc',
+      },
+    });
+
+    if (memberships.length === 0) {
+      return {
+        message: 'Академиялық бағалар мен рейтингтер',
+        summary: {
+          totalSubjects: 0,
+          completedSubjects: 0,
+          incompleteSubjects: 0,
+          averageRk1: null,
+          averageRk2: null,
+          averageAdmissionRating: null,
+          averageSession: null,
+          averageFinalScore: null,
+          gpa: null,
+        },
+        subjects: [],
+      };
+    }
+
+    const groupIds = memberships.map((m) => m.groupId);
+
+    const termGrades = await this.prisma.termGrade.findMany({
+      where: {
+        studentId: student.id,
+        groupId: { in: groupIds },
+      },
+    });
+
+    const gradesByGroupId = new Map(termGrades.map((g) => [g.groupId, g]));
+
+    const subjects = memberships.map((membership) => {
+      const g = gradesByGroupId.get(membership.groupId);
+      const rk1 = g?.rk1 !== undefined ? g.rk1 : null;
+      const rk2 = g?.rk2 !== undefined ? g.rk2 : null;
+      const session = g?.session !== undefined ? g.session : null;
+
+      const admissionRating = calculateAdmissionRating(rk1, rk2);
+      const finalScore = calculateFinalScore(rk1, rk2, session);
+      const gradeLetter = getGradeLetter(finalScore, session);
+      const status = getGradeStatus(rk1, rk2, session);
+
+      return {
+        groupId: membership.group.id,
+        groupName: membership.group.name,
+        subjectId: membership.group.subject.id,
+        subjectName: membership.group.subject.name,
+        subjectCode: membership.group.subject.code,
+        course: membership.group.course,
+        semester: membership.group.semester,
+        academicYear: membership.group.academicYear,
+        teacher: {
+          fullName: membership.group.teacher?.user?.fullName || 'Мұғалім бекітілмеген',
+          email: membership.group.teacher?.user?.email || null,
+        },
+        rk1,
+        rk2,
+        admissionRating,
+        session,
+        finalScore,
+        gradeLetter,
+        status,
+        note: g?.note ?? null,
+        updatedAt: g?.updatedAt ?? null,
+      };
+    });
+
+    // Summary calculations
+    const rk1Values = subjects.map((s) => s.rk1).filter((v): v is number => v !== null);
+    const rk2Values = subjects.map((s) => s.rk2).filter((v): v is number => v !== null);
+    const admissionValues = subjects.map((s) => s.admissionRating).filter((v): v is number => v !== null);
+    const sessionValues = subjects.map((s) => s.session).filter((v): v is number => v !== null);
+    const finalValues = subjects.map((s) => s.finalScore).filter((v): v is number => v !== null);
+
+    const avg = (arr: number[]) =>
+      arr.length > 0 ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10 : null;
+
+    const gpaPoints = subjects
+      .map((s) => getGpaPoints(s.gradeLetter))
+      .filter((v): v is number => v !== null);
+
+    const gpa =
+      gpaPoints.length > 0
+        ? Math.round((gpaPoints.reduce((a, b) => a + b, 0) / gpaPoints.length) * 100) / 100
+        : null;
+
+    return {
+      message: 'Академиялық бағалар мен рейтингтер',
+      summary: {
+        totalSubjects: subjects.length,
+        completedSubjects: subjects.filter((s) => s.status === 'COMPLETE').length,
+        incompleteSubjects: subjects.filter((s) => s.status === 'INCOMPLETE').length,
+        averageRk1: avg(rk1Values),
+        averageRk2: avg(rk2Values),
+        averageAdmissionRating: avg(admissionValues),
+        averageSession: avg(sessionValues),
+        averageFinalScore: avg(finalValues),
+        gpa,
+      },
+      subjects,
     };
   }
 }

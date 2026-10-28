@@ -73,6 +73,13 @@ enum TestAttemptStatus {
   EXPIRED
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 model User {
   id             String          @id @default(uuid())
   fullName       String
@@ -147,6 +154,8 @@ model StudentProfile {
   materialProgresses    StudentMaterialProgress[]
   assignmentSubmissions AssignmentSubmission[]
   testAttempts          TestAttempt[]
+  attendanceRecords     AttendanceRecord[]
+  termGrades            TermGrade[]
 }
 
 model TeacherProfile {
@@ -167,6 +176,8 @@ model TeacherProfile {
   faculty      Faculty    @relation(fields: [facultyId], references: [id])
   groups       Group[]
   tests        Test[]
+  markedAttendances AttendanceRecord[]
+  markedTermGrades  TermGrade[]
 }
 
 model Subject {
@@ -179,6 +190,7 @@ model Subject {
   groups      Group[]
   topics      Topic[]
   tests       Test[]
+  termGrades  TermGrade[]
 
   @@index([name])
 }
@@ -202,8 +214,10 @@ model Group {
   subject      Subject           @relation(fields: [subjectId], references: [id])
   teacher      TeacherProfile    @relation(fields: [teacherId], references: [id])
   createdBy    User?             @relation("GroupCreatedBy", fields: [createdById], references: [id])
-  memberships  GroupMembership[]
-  joinRequests JoinRequest[]
+  memberships       GroupMembership[]
+  joinRequests      JoinRequest[]
+  attendanceRecords AttendanceRecord[]
+  termGrades        TermGrade[]
 
   @@index([subjectId])
   @@index([teacherId])
@@ -438,4 +452,49 @@ model TestAnswer {
   @@index([attemptId])
   @@index([questionId])
 }
+
+model AttendanceRecord {
+  id                String           @id @default(uuid())
+  studentId         String
+  groupId           String
+  date              DateTime         @db.Date
+  status            AttendanceStatus @default(PRESENT)
+  markedByTeacherId String?
+  note              String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  student           StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  group             Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  markedBy          TeacherProfile?  @relation(fields: [markedByTeacherId], references: [id], onDelete: SetNull)
+
+  @@unique([studentId, groupId, date])
+  @@index([groupId, date])
+  @@index([studentId, date])
+}
+
+model TermGrade {
+  id                String          @id @default(uuid())
+  studentId         String
+  groupId           String
+  subjectId         String
+  rk1               Float?
+  rk2               Float?
+  session           Float?
+  note              String?
+  markedByTeacherId String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  student           StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  group             Group           @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  subject           Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  markedBy          TeacherProfile? @relation(fields: [markedByTeacherId], references: [id], onDelete: SetNull)
+
+  @@unique([studentId, groupId])
+  @@index([groupId])
+  @@index([studentId])
+  @@index([subjectId])
+}
+
 

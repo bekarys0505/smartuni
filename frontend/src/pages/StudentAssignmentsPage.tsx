@@ -14,6 +14,7 @@ import {
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
 import { getToken } from '../utils/auth';
+import { api, getDownloadUrl } from '../utils/api';
 
 type AssignmentResponseType = 'TEXT' | 'FILE' | 'TEXT_AND_FILE';
 type AssignmentSubmissionStatus = 'NOT_SUBMITTED' | 'SUBMITTED' | 'GRADED' | 'LATE';
@@ -87,21 +88,7 @@ export const StudentAssignmentsPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/assignments`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Тапсырмаларды жүктеу кезінде қате орын алды');
-      }
-
-      const data = await response.json();
+      const data = await api.get<{ assignments: AssignmentItem[] }>('/api/student/assignments');
       setAssignments(data.assignments || []);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Белгісіз қателік';
@@ -148,35 +135,25 @@ export const StudentAssignmentsPage: React.FC = () => {
 
     // Upload file
     setUploading(true);
-    const token = getToken();
     try {
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64 = reader.result as string;
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-        const res = await fetch(`${apiUrl}/api/upload`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        try {
+          const base64 = reader.result as string;
+          const resData = await api.upload<{ url: string }>('/api/upload', {
             fileName: file.name,
             fileBase64: base64,
             fileSize: file.size,
-          }),
-        });
+          });
 
-        if (!res.ok) {
-          const d = await res.json().catch(() => ({}));
-          throw new Error(d.message || 'Файлды жүктеу мүмкін болмады');
+          setFileUrl(resData.url);
+          setFileName(file.name);
+          setUploading(false);
+        } catch (uploadErr) {
+          const msg = uploadErr instanceof Error ? uploadErr.message : 'Файлды жүктеу мүмкін болмады';
+          setSubmitError(msg);
+          setUploading(false);
         }
-
-        const resData = await res.json();
-        setFileUrl(resData.url);
-        setFileName(file.name);
-        setUploading(false);
       };
       reader.readAsDataURL(file);
     } catch (err: unknown) {
@@ -201,26 +178,23 @@ export const StudentAssignmentsPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/assignments/${selectedAssignment.id}/submit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          textAnswer: textAnswer.trim() || undefined,
-          fileUrl: fileUrl || undefined,
-          fileName: fileName || undefined,
-        }),
+      const resData = await api.post<{
+        message?: string;
+        submission: {
+          id: string;
+          textAnswer: string | null;
+          fileUrl: string | null;
+          status: AssignmentSubmissionStatus;
+          submittedAt: string | null;
+          score: number | null;
+          teacherComment: string | null;
+        };
+      }>(`/api/student/assignments/${selectedAssignment.id}/submit`, {
+        textAnswer: textAnswer.trim() || undefined,
+        fileUrl: fileUrl || undefined,
+        fileName: fileName || undefined,
       });
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Жауапты жіберу сәтсіз аяқталды');
-      }
-
-      const resData = await response.json();
       setSubmitSuccess(resData.message || 'Жауабыңыз сәтті жіберілді!');
 
       // Update state
@@ -623,7 +597,7 @@ export const StudentAssignmentsPage: React.FC = () => {
                     📎 Оқытушы тіркеген материал
                   </span>
                   <a
-                    href={selectedAssignment.attachmentUrl}
+                    href={getDownloadUrl(selectedAssignment.attachmentUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ textDecoration: 'none' }}
@@ -759,7 +733,7 @@ export const StudentAssignmentsPage: React.FC = () => {
                       >
                         <Icon name="check" size={14} /> Тіркелген файл: <strong>{fileName}</strong>
                         <a
-                          href={fileUrl}
+                          href={getDownloadUrl(fileUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{ color: 'var(--su-primary)', marginLeft: '6px' }}

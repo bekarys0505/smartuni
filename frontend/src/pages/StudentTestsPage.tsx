@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface TestItem {
   id: string;
@@ -54,18 +54,7 @@ export const StudentTestsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = getToken();
-      const res = await fetch('/api/student/tests', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Тесттер тізімін жүктеу мүмкін болмады');
-      }
-
-      const data = await res.json();
+      const data = await api.get<{ tests: TestItem[] }>('/api/student/tests');
       setTests(data.tests || []);
     } catch (err: any) {
       setError(err.message || 'Сервермен байланыс қатесі');
@@ -81,7 +70,6 @@ export const StudentTestsPage: React.FC = () => {
   const handleStartOrContinueTest = async (test: TestItem) => {
     try {
       setStartingTestId(test.id);
-      const token = getToken();
 
       // If already has active attempt
       if (test.latestAttempt && test.latestAttempt.status === 'IN_PROGRESS') {
@@ -90,19 +78,7 @@ export const StudentTestsPage: React.FC = () => {
       }
 
       // Start new
-      const res = await fetch(`/api/student/tests/${test.id}/start`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Тестті бастау сәтсіз аяқталды');
-      }
-
-      const data = await res.json();
+      const data = await api.post<{ attemptId: string }>(`/api/student/tests/${test.id}/start`);
       navigate(`/student/tests/${test.id}/attempt/${data.attemptId}`);
     } catch (err: any) {
       alert(err.message);

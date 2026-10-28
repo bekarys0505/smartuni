@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 import { AppShell } from '../components/layout/AppShell';
 import '../styles/TeacherDashboard.css';
 
@@ -82,48 +83,11 @@ export default function TeacherDashboardPage() {
     setError(null);
 
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const [profileRes, dashboardRes, groupsRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_URL}/api/teacher/profile`, {
-          method: 'GET',
-          headers,
-        }),
-        fetch(`${import.meta.env.VITE_API_URL}/api/teacher/dashboard`, {
-          method: 'GET',
-          headers,
-        }),
-        fetch(`${import.meta.env.VITE_API_URL}/api/teacher/groups`, {
-          method: 'GET',
-          headers,
-        }),
-      ]);
-
       const [profileData, dashboardData, groupsData] = await Promise.all([
-        profileRes.json(),
-        dashboardRes.json(),
-        groupsRes.json(),
+        api.get<{ profile: TeacherProfile }>('/api/teacher/profile'),
+        api.get<DashboardData>('/api/teacher/dashboard'),
+        api.get<{ groups: TeacherGroup[] }>('/api/teacher/groups'),
       ]);
-
-      if (!profileRes.ok) {
-        throw new Error(
-          profileData?.message || 'Оқытушы профилін жүктеу сәтсіз аяқталды',
-        );
-      }
-
-      if (!dashboardRes.ok) {
-        throw new Error(
-          dashboardData?.message || 'Dashboard деректерін жүктеу сәтсіз аяқталды',
-        );
-      }
-
-      if (!groupsRes.ok) {
-        throw new Error(
-          groupsData?.message || 'Топтар деректерін жүктеу сәтсіз аяқталды',
-        );
-      }
 
       setProfile(profileData.profile);
       setDashboard(dashboardData);

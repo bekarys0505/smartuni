@@ -14,6 +14,7 @@ import {
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
 import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface TopicItem {
   id: string;
@@ -72,27 +73,7 @@ export const StudentSubjectPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/subjects/${subjectId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          throw new Error('Сіз бұл пәннің белсенді тыңдаушысы емессіз немесе қолжетімділік шектелген.');
-        }
-        if (response.status === 404) {
-          throw new Error('Пән жүйеде табылмады.');
-        }
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Пән деректерін жүктеу кезінде қате кетті');
-      }
-
-      const resData = await response.json();
+      const resData = await api.get<SubjectDetailsResponse>(`/api/student/subjects/${subjectId}`);
       setData(resData);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Белгісіз қателік';

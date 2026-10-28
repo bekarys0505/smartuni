@@ -405,6 +405,23 @@ export class StudentCalendarService {
     const subjectIds = memberships.map((m) => m.group.subjectId);
 
     // 1. LESSONS FOR THIS DAY
+    const startOfDay = new Date(`${selectedDateStr}T00:00:00.000Z`);
+    const dayAttendanceRecords = await this.prisma.attendanceRecord.findMany({
+      where: {
+        studentId: student.id,
+        date: startOfDay,
+      },
+    });
+    const dayAttendanceMap = new Map<string, { id: string; status: any; note: string | null; updatedAt: Date }>();
+    for (const rec of dayAttendanceRecords) {
+      dayAttendanceMap.set(rec.groupId, {
+        id: rec.id,
+        status: rec.status,
+        note: rec.note,
+        updatedAt: rec.updatedAt,
+      });
+    }
+
     const lessons: any[] = [];
     for (const membership of memberships) {
       const g = membership.group;
@@ -412,6 +429,7 @@ export class StudentCalendarService {
 
       if (dayIndices.includes(dayOfWeekIndex)) {
         const { startTime, endTime } = this.parseTimeRange(g.lessonTime);
+        const dayAtt = dayAttendanceMap.get(g.id);
         lessons.push({
           id: `lesson-${g.id}-${selectedDateStr}`,
           groupId: g.id,
@@ -425,6 +443,14 @@ export class StudentCalendarService {
           endTime,
           course: g.course,
           semester: g.semester,
+          attendance: dayAtt
+            ? {
+                id: dayAtt.id,
+                status: dayAtt.status,
+                note: dayAtt.note,
+                markedAt: dayAtt.updatedAt.toISOString(),
+              }
+            : null,
         });
       }
     }
@@ -557,6 +583,23 @@ export class StudentCalendarService {
     ).length;
     const completedTestsCount = tests.filter((t) => t.attemptStatus === 'COMPLETED').length;
 
+    // Attendance stats for student
+    const allStudentAttendance = await this.prisma.attendanceRecord.findMany({
+      where: {
+        studentId: student.id,
+      },
+    });
+
+    const totalMarked = allStudentAttendance.length;
+    const presentCount = allStudentAttendance.filter((r) => r.status === 'PRESENT').length;
+    const absentCount = allStudentAttendance.filter((r) => r.status === 'ABSENT').length;
+    const lateCount = allStudentAttendance.filter((r) => r.status === 'LATE').length;
+    const excusedCount = allStudentAttendance.filter((r) => r.status === 'EXCUSED').length;
+
+    const attendanceRate = totalMarked > 0
+      ? Math.round(((presentCount + lateCount) / totalMarked) * 100)
+      : 100;
+
     return {
       message: 'Күнделік мәліметтері',
       date: selectedDateStr,
@@ -569,10 +612,140 @@ export class StudentCalendarService {
         totalCount: lessons.length + tasks.length + tests.length,
         completedTasksCount,
         completedTestsCount,
+        attendance: {
+          totalMarked,
+          present: presentCount,
+          absent: absentCount,
+          late: lateCount,
+          excused: excusedCount,
+          attendanceRate,
+        },
       },
       lessons,
       tasks,
       tests,
+    };
+  }
+
+  async getStudentAttendanceHistory(userId?: string) {
+    if (!userId) {
+      throw new NotFoundException('Қолданушы анықталмады');
+    }
+
+    const student = await this.prisma.studentProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!student) {
+      throw new NotFoundException('Студент профилі табылмады');
+    }
+
+    const memberships = await this.prisma.groupMembership.findMany({
+      where: {
+        studentId: student.id,
+        status: 'ACTIVE',
+      },
+      include: {
+        group: {
+          include: {
+            subject: true,
+            teacher: {
+              include: { user: true },
+            },
+          },
+        },
+      },
+    });
+
+    const allRecords = await this.prisma.attendanceRecord.findMany({
+      where: {
+        studentId: student.id,
+      },
+      include: {
+        group: {
+          include: {
+            subject: true,
+            teacher: {
+              include: { user: true },
+            },
+          },
+        },
+        markedBy: {
+          include: { user: true },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    const totalMarked = allRecords.length;
+    const presentCount = allRecords.filter((r) => r.status === 'PRESENT').length;
+    const absentCount = allRecords.filter((r) => r.status === 'ABSENT').length;
+    const lateCount = allRecords.filter((r) => r.status === 'LATE').length;
+    const excusedCount = allRecords.filter((r) => r.status === 'EXCUSED').length;
+
+    const attendanceRate = totalMarked > 0
+      ? Math.round(((presentCount + lateCount) / totalMarked) * 100)
+      : 100;
+
+    // Subject breakdown
+    const subjectBreakdown = memberships.map((m) => {
+      const g = m.group;
+      const groupRecords = allRecords.filter((r) => r.groupId === g.id);
+      const grpTotal = groupRecords.length;
+      const grpPresent = groupRecords.filter((r) => r.status === 'PRESENT').length;
+      const grpAbsent = groupRecords.filter((r) => r.status === 'ABSENT').length;
+      const grpLate = groupRecords.filter((r) => r.status === 'LATE').length;
+      const grpExcused = groupRecords.filter((r) => r.status === 'EXCUSED').length;
+      const grpRate = grpTotal > 0
+        ? Math.round(((grpPresent + grpLate) / grpTotal) * 100)
+        : 100;
+
+      return {
+        groupId: g.id,
+        groupName: g.name,
+        subjectId: g.subjectId,
+        subjectName: g.subject.name,
+        subjectCode: g.subject.code,
+        teacherName: g.teacher?.user?.fullName || 'Оқытушы',
+        course: g.course,
+        semester: g.semester,
+        totalMarked: grpTotal,
+        presentCount: grpPresent,
+        absentCount: grpAbsent,
+        lateCount: grpLate,
+        excusedCount: grpExcused,
+        attendanceRate: grpRate,
+      };
+    });
+
+    const formattedRecords = allRecords.map((r) => ({
+      id: r.id,
+      date: this.formatDateString(r.date),
+      status: r.status,
+      note: r.note,
+      groupId: r.groupId,
+      groupName: r.group.name,
+      subjectId: r.group.subjectId,
+      subjectName: r.group.subject.name,
+      subjectCode: r.group.subject.code,
+      teacherName: r.markedBy?.user?.fullName || r.group.teacher?.user?.fullName || 'Оқытушы',
+      updatedAt: r.updatedAt.toISOString(),
+    }));
+
+    return {
+      message: 'Студенттің қатысу статистикасы',
+      summary: {
+        totalMarked,
+        presentCount,
+        absentCount,
+        lateCount,
+        excusedCount,
+        attendanceRate,
+      },
+      subjectBreakdown,
+      records: formattedRecords,
     };
   }
 }

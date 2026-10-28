@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 import { AppShell } from '../components/layout/AppShell';
 import '../styles/TeacherDashboard.css';
 import '../styles/TeacherRequests.css';
@@ -62,22 +63,7 @@ export default function TeacherRequestsPage() {
     setError(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/teacher/join-requests`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.message || 'Өтініштерді жүктеу сәтсіз аяқталды');
-      }
-
+      const data = await api.get<{ requests: JoinRequestItem[] }>('/api/teacher/join-requests');
       setRequests(data.requests || []);
     } catch (err) {
       if (err instanceof Error) {
@@ -96,35 +82,12 @@ export default function TeacherRequestsPage() {
 
   // Handle Accept Action
   async function handleAccept(request: JoinRequestItem) {
-    const token = getToken();
-    if (!token) {
-      setFeedback({
-        type: 'error',
-        message: 'Сессия аяқталды. Қайта жүйеге кіріңіз.',
-      });
-      return;
-    }
-
     setProcessingId(request.id);
     setProcessingType('accept');
     setConfirmingRejectId(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/teacher/join-requests/${request.id}/accept`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.message || 'Өтінішті қабылдау сәтсіз аяқталды');
-      }
+      await api.patch(`/api/teacher/join-requests/${request.id}/accept`);
 
       // Remove the accepted request from the pending list
       setRequests((prev) => prev.filter((r) => r.id !== request.id));
@@ -150,34 +113,11 @@ export default function TeacherRequestsPage() {
 
   // Handle Reject Action
   async function handleReject(request: JoinRequestItem) {
-    const token = getToken();
-    if (!token) {
-      setFeedback({
-        type: 'error',
-        message: 'Сессия аяқталды. Қайта жүйеге кіріңіз.',
-      });
-      return;
-    }
-
     setProcessingId(request.id);
     setProcessingType('reject');
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/teacher/join-requests/${request.id}/reject`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.message || 'Өтінішті қабылдамау сәтсіз аяқталды');
-      }
+      await api.patch(`/api/teacher/join-requests/${request.id}/reject`);
 
       // Remove the rejected request from the pending list
       setRequests((prev) => prev.filter((r) => r.id !== request.id));

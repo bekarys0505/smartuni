@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import {
+  clearAuth,
   getDashboardRouteByRole,
   getUser,
   isAuthenticated,
@@ -19,16 +20,22 @@ export function ProtectedRoute({
   const location = useLocation();
 
   if (!isAuthenticated()) {
-    // Жүйеге кірмеген қолданушыны логинге бағыттау
+    // Жүйеге кірмеген немесе токені ескірген қолданушыны логинге бағыттау
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   const user = getUser();
   const userRole = user?.role;
 
+  // Егер рөл мүлдем анықталмаса, бүлінген сессияны тазартып логинге жіберу
+  if (!userRole) {
+    clearAuth();
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
   // Егер нақты рөлдер талап етілсе және қолданушының рөлі сәйкес келмесе
-  if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
-    // Өз рөліне сәйкес тиісті кабинетке бағыттау (redirect loop-ты болдырмау үшін)
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    // Өз рөліне сәйкес кабинетке қауіпсіз бағыттау
     const targetDashboard = getDashboardRouteByRole(userRole);
     return <Navigate to={targetDashboard} replace />;
   }

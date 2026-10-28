@@ -37,17 +37,75 @@ export function getToken(): string | null {
   }
 }
 
+export interface JwtPayload {
+  sub?: string;
+  email?: string;
+  role?: UserRole;
+  exp?: number;
+  iat?: number;
+  [key: string]: unknown;
+}
+
 /**
- * Сақталған қолданушы деректерін алады
+ * JWT payload-ын қауіпсіз парсингтеу (base64url)
+ */
+export function parseJwtPayload(token: string): JwtPayload | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(''),
+    );
+    return JSON.parse(jsonPayload) as JwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Токеннің жарамдылық мерзімі өтіп кеткенін тексереді
+ */
+export function isTokenExpired(token: string): boolean {
+  const payload = parseJwtPayload(token);
+  if (!payload || !payload.exp) return false;
+  // exp секундпен келеді, миллисекундпен салыстырамыз
+  return payload.exp * 1000 <= Date.now();
+}
+
+/**
+ * Сақталған қолданушы деректерін алады (қажет болса JWT арқылы толықтырады)
  */
 export function getUser(): AuthUser | null {
   try {
     const raw = localStorage.getItem(USER_STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as AuthUser;
+    if (raw) {
+      const parsed = JSON.parse(raw) as AuthUser;
+      if (parsed && parsed.role) return parsed;
+    }
   } catch {
-    return null;
+    // JSON парсинг қатесі болса, токен арқылы қалпына келтіруге тырысамыз
   }
+
+  // Егер smartuniUser өшірілген немесе бұзылған болса, JWT токеннен қалпына келтіру
+  const token = getToken();
+  if (token) {
+    const payload = parseJwtPayload(token);
+    if (payload?.sub && payload?.role) {
+      return {
+        id: payload.sub,
+        fullName: payload.email || 'Қолданушы',
+        email: payload.email || '',
+        role: payload.role,
+      };
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -63,11 +121,26 @@ export function setAuth(token: string, user: AuthUser): void {
 }
 
 /**
+ * Локалды сақталған қолданушы мәліметтерін ішінара жаңартады
+ */
+export function updateUser(partialUser: Partial<AuthUser>): void {
+  try {
+    const current = getUser();
+    if (!current) return;
+    const updated = { ...current, ...partialUser };
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updated));
+  } catch (error) {
+    console.error('Failed to update user in localStorage:', error);
+  }
+}
+
+/**
  * Авторизация деректерін толық тазартады (Logout)
  */
 export function clearAuth(): void {
   try {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.setItem(USER_STORAGE_KEY, '');
     localStorage.removeItem(USER_STORAGE_KEY);
   } catch (error) {
     console.error('Failed to clear auth from localStorage:', error);
@@ -75,19 +148,38 @@ export function clearAuth(): void {
 }
 
 /**
- * Қолданушы жүйеге кіргенін тексереді
+ * Қолданушы жүйеге кіргенін және токеннің жарамдылығын тексереді
  */
 export function isAuthenticated(): boolean {
   const token = getToken();
-  return typeof token === 'string' && token.trim().length > 0;
+  if (!token || typeof token !== 'string' || token.trim().length === 0) {
+    return false;
+  }
+
+  // Егер токен жарамсыз немесе мерзімі өткен болса, сессияны тазарту
+  const payload = parseJwtPayload(token);
+  if (!payload || isTokenExpired(token)) {
+    clearAuth();
+    return false;
+  }
+
+  return true;
 }
 
 /**
- * Қолданушының рөлін алады
+ * Қолданушының рөлін алады (алдымен user объектісінен, кейін JWT payload-тан)
  */
 export function getUserRole(): UserRole | null {
   const user = getUser();
-  return user?.role ?? null;
+  if (user?.role) return user.role;
+
+  const token = getToken();
+  if (token) {
+    const payload = parseJwtPayload(token);
+    if (payload?.role) return payload.role;
+  }
+
+  return null;
 }
 
 /**
@@ -100,8 +192,9 @@ export function getDashboardRouteByRole(role?: string | null): string {
     case 'TEACHER':
       return '/teacher/dashboard';
     case 'STUDENT':
-    default:
       return '/student/dashboard';
+    default:
+      return '/login';
   }
 }
 

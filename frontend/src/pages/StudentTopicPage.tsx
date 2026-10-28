@@ -15,6 +15,7 @@ import {
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
 import { getToken } from '../utils/auth';
+import { api, getDownloadUrl } from '../utils/api';
 
 type MaterialType = 'LECTURE' | 'VIDEO' | 'ADDITIONAL_RESOURCE';
 type ProgressStatus = 'UNREAD' | 'STARTED' | 'COMPLETED';
@@ -89,27 +90,7 @@ export const StudentTopicPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/topics/${topicId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          throw new Error('Бұл тақырыпқа қолжетімділік жоқ (пән тыңдаушысы емессіз).');
-        }
-        if (response.status === 404) {
-          throw new Error('Тақырып табылмады.');
-        }
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Тақырып материалдарын жүктеу кезінде қате орын алды');
-      }
-
-      const resData = await response.json();
+      const resData = await api.get<TopicDetailsResponse>(`/api/student/topics/${topicId}`);
       setData(resData);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Белгісіз қателік';
@@ -132,29 +113,20 @@ export const StudentTopicPage: React.FC = () => {
       if (!token) return;
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        const response = await fetch(`${apiUrl}/api/student/materials/${material.id}/start`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+        await api.patch(`/api/student/materials/${material.id}/start`);
+
+        // Update status locally
+        setData((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            materials: prev.materials.map((m) =>
+              m.id === material.id ? { ...m, status: 'STARTED' } : m,
+            ),
+          };
         });
 
-        if (response.ok) {
-          // Update status locally
-          setData((prev) => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              materials: prev.materials.map((m) =>
-                m.id === material.id ? { ...m, status: 'STARTED' } : m,
-              ),
-            };
-          });
-
-          setSelectedMaterial((prev) => (prev ? { ...prev, status: 'STARTED' } : null));
-        }
+        setSelectedMaterial((prev) => (prev ? { ...prev, status: 'STARTED' } : null));
       } catch (err) {
         console.error('Failed to mark material as STARTED:', err);
       }
@@ -173,19 +145,7 @@ export const StudentTopicPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/materials/${selectedMaterial.id}/complete`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Материалды аяқтау мүмкін болмады');
-      }
+      await api.patch(`/api/student/materials/${selectedMaterial.id}/complete`);
 
       // Update state locally
       setData((prev) => {
@@ -740,7 +700,7 @@ export const StudentTopicPage: React.FC = () => {
                   </div>
 
                   <a
-                    href={selectedMaterial.contentUrl}
+                    href={getDownloadUrl(selectedMaterial.contentUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ textDecoration: 'none' }}

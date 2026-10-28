@@ -4,11 +4,12 @@ import {
   Get,
   Param,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FileService } from './file.service';
 
@@ -31,13 +32,23 @@ export class FileController {
 
   @UseGuards(JwtAuthGuard)
   @Post('upload')
-  async upload(@Body() dto: UploadFileDto) {
-    return this.fileService.uploadFile(dto.fileName, dto.fileBase64, dto.fileSize);
+  async upload(
+    @Req() req: Request & { user?: { sub?: string } },
+    @Body() dto: UploadFileDto,
+  ) {
+    const userId = req.user?.sub;
+    return this.fileService.uploadFile(userId, dto.fileName, dto.fileBase64, dto.fileSize);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('files/:filename')
-  async getFile(@Param('filename') filename: string, @Res() res: Response) {
-    const filePath = this.fileService.getFilePath(filename);
+  async getFile(
+    @Req() req: Request & { user?: { sub?: string } },
+    @Param('filename') filename: string,
+    @Res() res: Response,
+  ) {
+    const userId = req.user?.sub;
+    const filePath = await this.fileService.authorizeAndGetFilePath(userId, filename);
     res.sendFile(filePath);
   }
 }

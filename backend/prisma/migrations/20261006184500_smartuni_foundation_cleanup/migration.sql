@@ -1,5 +1,10 @@
 -- 1. Clean up MektepAI demo users and restore admin@smartuni.kz role to ADMIN
-UPDATE "User" SET "schoolId" = NULL WHERE "email" = 'admin@smartuni.kz';
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='User' AND column_name='schoolId') THEN
+    EXECUTE 'UPDATE "User" SET "schoolId" = NULL WHERE "email" = ''admin@smartuni.kz''';
+  END IF;
+END $$;
 DELETE FROM "User" WHERE "email" LIKE '%@mektepai.kz';
 
 -- 2. Alter UserRole enum back to STUDENT, TEACHER, ADMIN
@@ -15,23 +20,23 @@ ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'STUDENT';
 COMMIT;
 
 -- 3. Drop all school foreign keys
-ALTER TABLE "AcademicYear" DROP CONSTRAINT IF EXISTS "AcademicYear_schoolId_fkey";
-ALTER TABLE "Building" DROP CONSTRAINT IF EXISTS "Building_schoolId_fkey";
-ALTER TABLE "Class" DROP CONSTRAINT IF EXISTS "Class_academicYearId_fkey";
-ALTER TABLE "Class" DROP CONSTRAINT IF EXISTS "Class_classTeacherId_fkey";
-ALTER TABLE "Class" DROP CONSTRAINT IF EXISTS "Class_schoolId_fkey";
-ALTER TABLE "Floor" DROP CONSTRAINT IF EXISTS "Floor_buildingId_fkey";
-ALTER TABLE "ParentProfile" DROP CONSTRAINT IF EXISTS "ParentProfile_schoolId_fkey";
-ALTER TABLE "ParentProfile" DROP CONSTRAINT IF EXISTS "ParentProfile_userId_fkey";
-ALTER TABLE "ParentStudentRelation" DROP CONSTRAINT IF EXISTS "ParentStudentRelation_parentId_fkey";
-ALTER TABLE "ParentStudentRelation" DROP CONSTRAINT IF EXISTS "ParentStudentRelation_studentId_fkey";
-ALTER TABLE "Room" DROP CONSTRAINT IF EXISTS "Room_floorId_fkey";
-ALTER TABLE "StudentProfile" DROP CONSTRAINT IF EXISTS "StudentProfile_classId_fkey";
-ALTER TABLE "StudentProfile" DROP CONSTRAINT IF EXISTS "StudentProfile_schoolId_fkey";
-ALTER TABLE "Subject" DROP CONSTRAINT IF EXISTS "Subject_schoolId_fkey";
-ALTER TABLE "TeacherProfile" DROP CONSTRAINT IF EXISTS "TeacherProfile_schoolId_fkey";
-ALTER TABLE "Term" DROP CONSTRAINT IF EXISTS "Term_academicYearId_fkey";
-ALTER TABLE "User" DROP CONSTRAINT IF EXISTS "User_schoolId_fkey";
+ALTER TABLE IF EXISTS "AcademicYear" DROP CONSTRAINT IF EXISTS "AcademicYear_schoolId_fkey";
+ALTER TABLE IF EXISTS "Building" DROP CONSTRAINT IF EXISTS "Building_schoolId_fkey";
+ALTER TABLE IF EXISTS "Class" DROP CONSTRAINT IF EXISTS "Class_academicYearId_fkey";
+ALTER TABLE IF EXISTS "Class" DROP CONSTRAINT IF EXISTS "Class_classTeacherId_fkey";
+ALTER TABLE IF EXISTS "Class" DROP CONSTRAINT IF EXISTS "Class_schoolId_fkey";
+ALTER TABLE IF EXISTS "Floor" DROP CONSTRAINT IF EXISTS "Floor_buildingId_fkey";
+ALTER TABLE IF EXISTS "ParentProfile" DROP CONSTRAINT IF EXISTS "ParentProfile_schoolId_fkey";
+ALTER TABLE IF EXISTS "ParentProfile" DROP CONSTRAINT IF EXISTS "ParentProfile_userId_fkey";
+ALTER TABLE IF EXISTS "ParentStudentRelation" DROP CONSTRAINT IF EXISTS "ParentStudentRelation_parentId_fkey";
+ALTER TABLE IF EXISTS "ParentStudentRelation" DROP CONSTRAINT IF EXISTS "ParentStudentRelation_studentId_fkey";
+ALTER TABLE IF EXISTS "Room" DROP CONSTRAINT IF EXISTS "Room_floorId_fkey";
+ALTER TABLE IF EXISTS "StudentProfile" DROP CONSTRAINT IF EXISTS "StudentProfile_classId_fkey";
+ALTER TABLE IF EXISTS "StudentProfile" DROP CONSTRAINT IF EXISTS "StudentProfile_schoolId_fkey";
+ALTER TABLE IF EXISTS "Subject" DROP CONSTRAINT IF EXISTS "Subject_schoolId_fkey";
+ALTER TABLE IF EXISTS "TeacherProfile" DROP CONSTRAINT IF EXISTS "TeacherProfile_schoolId_fkey";
+ALTER TABLE IF EXISTS "Term" DROP CONSTRAINT IF EXISTS "Term_academicYearId_fkey";
+ALTER TABLE IF EXISTS "User" DROP CONSTRAINT IF EXISTS "User_schoolId_fkey";
 
 -- 4. Drop school indexes
 DROP INDEX IF EXISTS "StudentProfile_classId_idx";

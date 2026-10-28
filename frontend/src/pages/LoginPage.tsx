@@ -2,6 +2,7 @@
 import { type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardRouteByRole, setAuth } from '../utils/auth';
+import { api } from '../utils/api';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -19,27 +20,11 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        },
+      const data = await api.post(
+        '/api/auth/login',
+        { email, password },
+        { skipAuth: true },
       );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message || 'Email немесе пароль қате',
-        );
-      }
 
       setAuth(data.accessToken, data.user);
 

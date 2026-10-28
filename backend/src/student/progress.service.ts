@@ -234,6 +234,22 @@ export class ProgressService {
       academicScore = 0;
     }
 
+    // D) Term Grades (RK-1, RK-2, Session)
+    const termGrades = await this.prisma.termGrade.findMany({
+      where: {
+        studentId: student.id,
+        subjectId: { in: subjectIds },
+      },
+    });
+
+    const rk1Values = termGrades.map((g) => g.rk1).filter((v): v is number => v !== null);
+    const rk2Values = termGrades.map((g) => g.rk2).filter((v): v is number => v !== null);
+    const sessionValues = termGrades.map((g) => g.session).filter((v): v is number => v !== null);
+
+    const rk1Avg = rk1Values.length > 0 ? this.roundPercentage(rk1Values.reduce((a, b) => a + b, 0) / rk1Values.length) : null;
+    const rk2Avg = rk2Values.length > 0 ? this.roundPercentage(rk2Values.reduce((a, b) => a + b, 0) / rk2Values.length) : null;
+    const sessionAvg = sessionValues.length > 0 ? this.roundPercentage(sessionValues.reduce((a, b) => a + b, 0) / sessionValues.length) : null;
+
     return {
       assignmentAverage: assignmentAvg !== null ? this.roundPercentage(assignmentAvg) : 0,
       testAverage: testAvg !== null ? this.roundPercentage(testAvg) : 0,
@@ -246,10 +262,9 @@ export class ProgressService {
         available: testAvg !== null,
         average: testAvg !== null ? this.roundPercentage(testAvg) : 0,
       },
-      // Future module integrations:
-      rk1: { available: false, score: null },
-      rk2: { available: false, score: null },
-      semester: { available: false, score: null },
+      rk1: { available: rk1Avg !== null, score: rk1Avg },
+      rk2: { available: rk2Avg !== null, score: rk2Avg },
+      semester: { available: sessionAvg !== null, score: sessionAvg },
     };
   }
 

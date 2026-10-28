@@ -9,7 +9,7 @@ import {
   Button,
   ErrorState,
 } from '../components/ui';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface ResultData {
   testId: string;
@@ -53,28 +53,14 @@ export const StudentTestResultPage: React.FC = () => {
     try {
       setLoading(true);
       setErrorMsg(null);
-      const token = getToken();
 
-      const [resResult, resErrors] = await Promise.all([
-        fetch(`/api/student/tests/${testId}/attempt/${attemptId}/result`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`/api/student/tests/${testId}/attempt/${attemptId}/errors`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+      const [dataResult, dataErrors] = await Promise.all([
+        api.get<{ result: ResultData }>(`/api/student/tests/${testId}/attempt/${attemptId}/result`),
+        api.get<{ errors: QuestionErrorItem[] }>(`/api/student/tests/${testId}/attempt/${attemptId}/errors`).catch(() => ({ errors: [] })),
       ]);
 
-      if (!resResult.ok) {
-        throw new Error('Нәтиже деректерін жүктеу мүмкін болмады');
-      }
-
-      const dataResult = await resResult.json();
       setResult(dataResult.result);
-
-      if (resErrors.ok) {
-        const dataErrors = await resErrors.json();
-        setErrors(dataErrors.errors || []);
-      }
+      setErrors(dataErrors?.errors || []);
     } catch (err: any) {
       setErrorMsg(err.message || 'Сервер қатесі');
     } finally {

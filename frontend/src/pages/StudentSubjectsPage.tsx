@@ -16,6 +16,7 @@ import {
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
 import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface SubjectItem {
   id: string;
@@ -62,24 +63,7 @@ export const StudentSubjectsPage: React.FC = () => {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/student/subjects`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Сессия мерзімі аяқталды. Қайта кіріңіз.');
-        }
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || 'Пәндер тізімін жүктеу мүмкін болмады');
-      }
-
-      const data = await response.json();
+      const data = await api.get<{ subjects: SubjectItem[] }>('/api/student/subjects');
       setSubjects(data.subjects || []);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Белгісіз қате орын алды';

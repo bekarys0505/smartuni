@@ -117,3 +117,13 @@ export type TestAttempt = Prisma.TestAttemptModel
  * 
  */
 export type TestAnswer = Prisma.TestAnswerModel
+/**
+ * Model AttendanceRecord
+ * 
+ */
+export type AttendanceRecord = Prisma.AttendanceRecordModel
+/**
+ * Model TermGrade
+ * 
+ */
+export type TermGrade = Prisma.TermGradeModel

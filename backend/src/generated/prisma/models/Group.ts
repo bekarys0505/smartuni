@@ -309,6 +309,8 @@ export type GroupWhereInput = {
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   memberships?: Prisma.GroupMembershipListRelationFilter
   joinRequests?: Prisma.JoinRequestListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
+  termGrades?: Prisma.TermGradeListRelationFilter
 }
 
 export type GroupOrderByWithRelationInput = {
@@ -332,6 +334,8 @@ export type GroupOrderByWithRelationInput = {
   createdBy?: Prisma.UserOrderByWithRelationInput
   memberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
   joinRequests?: Prisma.JoinRequestOrderByRelationAggregateInput
+  attendanceRecords?: Prisma.AttendanceRecordOrderByRelationAggregateInput
+  termGrades?: Prisma.TermGradeOrderByRelationAggregateInput
 }
 
 export type GroupWhereUniqueInput = Prisma.AtLeast<{
@@ -358,6 +362,8 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   memberships?: Prisma.GroupMembershipListRelationFilter
   joinRequests?: Prisma.JoinRequestListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
+  termGrades?: Prisma.TermGradeListRelationFilter
 }, "id">
 
 export type GroupOrderByWithAggregationInput = {
@@ -422,6 +428,8 @@ export type GroupCreateInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateInput = {
@@ -442,6 +450,8 @@ export type GroupUncheckedCreateInput = {
   createdById?: string | null
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUpdateInput = {
@@ -462,6 +472,8 @@ export type GroupUpdateInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateInput = {
@@ -482,6 +494,8 @@ export type GroupUncheckedUpdateInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateManyInput = {
@@ -770,6 +784,34 @@ export type GroupUpdateOneRequiredWithoutJoinRequestsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutJoinRequestsInput, Prisma.GroupUpdateWithoutJoinRequestsInput>, Prisma.GroupUncheckedUpdateWithoutJoinRequestsInput>
 }
 
+export type GroupCreateNestedOneWithoutAttendanceRecordsInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutAttendanceRecordsInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupUpdateOneRequiredWithoutAttendanceRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutAttendanceRecordsInput
+  upsert?: Prisma.GroupUpsertWithoutAttendanceRecordsInput
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutAttendanceRecordsInput, Prisma.GroupUpdateWithoutAttendanceRecordsInput>, Prisma.GroupUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type GroupCreateNestedOneWithoutTermGradesInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutTermGradesInput, Prisma.GroupUncheckedCreateWithoutTermGradesInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutTermGradesInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupUpdateOneRequiredWithoutTermGradesNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutTermGradesInput, Prisma.GroupUncheckedCreateWithoutTermGradesInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutTermGradesInput
+  upsert?: Prisma.GroupUpsertWithoutTermGradesInput
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutTermGradesInput, Prisma.GroupUpdateWithoutTermGradesInput>, Prisma.GroupUncheckedUpdateWithoutTermGradesInput>
+}
+
 export type GroupCreateWithoutCreatedByInput = {
   id?: string
   name: string
@@ -787,6 +829,8 @@ export type GroupCreateWithoutCreatedByInput = {
   teacher: Prisma.TeacherProfileCreateNestedOneWithoutGroupsInput
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutCreatedByInput = {
@@ -806,6 +850,8 @@ export type GroupUncheckedCreateWithoutCreatedByInput = {
   updatedAt?: Date | string
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutCreatedByInput = {
@@ -872,6 +918,8 @@ export type GroupCreateWithoutTeacherInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutTeacherInput = {
@@ -891,6 +939,8 @@ export type GroupUncheckedCreateWithoutTeacherInput = {
   createdById?: string | null
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutTeacherInput = {
@@ -936,6 +986,8 @@ export type GroupCreateWithoutSubjectInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutSubjectInput = {
@@ -955,6 +1007,8 @@ export type GroupUncheckedCreateWithoutSubjectInput = {
   createdById?: string | null
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutSubjectInput = {
@@ -1000,6 +1054,8 @@ export type GroupCreateWithoutMembershipsInput = {
   teacher: Prisma.TeacherProfileCreateNestedOneWithoutGroupsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
   joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMembershipsInput = {
@@ -1019,6 +1075,8 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   updatedAt?: Date | string
   createdById?: string | null
   joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMembershipsInput = {
@@ -1054,6 +1112,8 @@ export type GroupUpdateWithoutMembershipsInput = {
   teacher?: Prisma.TeacherProfileUpdateOneRequiredWithoutGroupsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMembershipsInput = {
@@ -1073,6 +1133,8 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutJoinRequestsInput = {
@@ -1092,6 +1154,8 @@ export type GroupCreateWithoutJoinRequestsInput = {
   teacher: Prisma.TeacherProfileCreateNestedOneWithoutGroupsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutJoinRequestsInput = {
@@ -1111,6 +1175,8 @@ export type GroupUncheckedCreateWithoutJoinRequestsInput = {
   updatedAt?: Date | string
   createdById?: string | null
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutJoinRequestsInput = {
@@ -1146,6 +1212,8 @@ export type GroupUpdateWithoutJoinRequestsInput = {
   teacher?: Prisma.TeacherProfileUpdateOneRequiredWithoutGroupsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutJoinRequestsInput = {
@@ -1165,6 +1233,208 @@ export type GroupUncheckedUpdateWithoutJoinRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  name: string
+  course: number
+  capacity?: number
+  semester: number
+  academicYear: string
+  lessonDay?: string | null
+  lessonTime?: string | null
+  classroom?: string | null
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subject: Prisma.SubjectCreateNestedOneWithoutGroupsInput
+  teacher: Prisma.TeacherProfileCreateNestedOneWithoutGroupsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeCreateNestedManyWithoutGroupInput
+}
+
+export type GroupUncheckedCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  name: string
+  subjectId: string
+  teacherId: string
+  course: number
+  capacity?: number
+  semester: number
+  academicYear: string
+  lessonDay?: string | null
+  lessonTime?: string | null
+  classroom?: string | null
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  termGrades?: Prisma.TermGradeUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type GroupCreateOrConnectWithoutAttendanceRecordsInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedCreateWithoutAttendanceRecordsInput>
+}
+
+export type GroupUpsertWithoutAttendanceRecordsInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedUpdateWithoutAttendanceRecordsInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedCreateWithoutAttendanceRecordsInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutAttendanceRecordsInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutAttendanceRecordsInput, Prisma.GroupUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type GroupUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  semester?: Prisma.IntFieldUpdateOperationsInput | number
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonDay?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  classroom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutGroupsNestedInput
+  teacher?: Prisma.TeacherProfileUpdateOneRequiredWithoutGroupsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  semester?: Prisma.IntFieldUpdateOperationsInput | number
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonDay?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  classroom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupCreateWithoutTermGradesInput = {
+  id?: string
+  name: string
+  course: number
+  capacity?: number
+  semester: number
+  academicYear: string
+  lessonDay?: string | null
+  lessonTime?: string | null
+  classroom?: string | null
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subject: Prisma.SubjectCreateNestedOneWithoutGroupsInput
+  teacher: Prisma.TeacherProfileCreateNestedOneWithoutGroupsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGroupsInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  joinRequests?: Prisma.JoinRequestCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutGroupInput
+}
+
+export type GroupUncheckedCreateWithoutTermGradesInput = {
+  id?: string
+  name: string
+  subjectId: string
+  teacherId: string
+  course: number
+  capacity?: number
+  semester: number
+  academicYear: string
+  lessonDay?: string | null
+  lessonTime?: string | null
+  classroom?: string | null
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  joinRequests?: Prisma.JoinRequestUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type GroupCreateOrConnectWithoutTermGradesInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutTermGradesInput, Prisma.GroupUncheckedCreateWithoutTermGradesInput>
+}
+
+export type GroupUpsertWithoutTermGradesInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutTermGradesInput, Prisma.GroupUncheckedUpdateWithoutTermGradesInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutTermGradesInput, Prisma.GroupUncheckedCreateWithoutTermGradesInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutTermGradesInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutTermGradesInput, Prisma.GroupUncheckedUpdateWithoutTermGradesInput>
+}
+
+export type GroupUpdateWithoutTermGradesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  semester?: Prisma.IntFieldUpdateOperationsInput | number
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonDay?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  classroom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutGroupsNestedInput
+  teacher?: Prisma.TeacherProfileUpdateOneRequiredWithoutGroupsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutTermGradesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  course?: Prisma.IntFieldUpdateOperationsInput | number
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  semester?: Prisma.IntFieldUpdateOperationsInput | number
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonDay?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  classroom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateManyCreatedByInput = {
@@ -1201,6 +1471,8 @@ export type GroupUpdateWithoutCreatedByInput = {
   teacher?: Prisma.TeacherProfileUpdateOneRequiredWithoutGroupsNestedInput
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutCreatedByInput = {
@@ -1220,6 +1492,8 @@ export type GroupUncheckedUpdateWithoutCreatedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1273,6 +1547,8 @@ export type GroupUpdateWithoutTeacherInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutTeacherInput = {
@@ -1292,6 +1568,8 @@ export type GroupUncheckedUpdateWithoutTeacherInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutTeacherInput = {
@@ -1345,6 +1623,8 @@ export type GroupUpdateWithoutSubjectInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedGroupsNestedInput
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutSubjectInput = {
@@ -1364,6 +1644,8 @@ export type GroupUncheckedUpdateWithoutSubjectInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   joinRequests?: Prisma.JoinRequestUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutGroupNestedInput
+  termGrades?: Prisma.TermGradeUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutSubjectInput = {
@@ -1391,11 +1673,15 @@ export type GroupUncheckedUpdateManyWithoutSubjectInput = {
 export type GroupCountOutputType = {
   memberships: number
   joinRequests: number
+  attendanceRecords: number
+  termGrades: number
 }
 
 export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | GroupCountOutputTypeCountMembershipsArgs
   joinRequests?: boolean | GroupCountOutputTypeCountJoinRequestsArgs
+  attendanceRecords?: boolean | GroupCountOutputTypeCountAttendanceRecordsArgs
+  termGrades?: boolean | GroupCountOutputTypeCountTermGradesArgs
 }
 
 /**
@@ -1422,6 +1708,20 @@ export type GroupCountOutputTypeCountJoinRequestsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.JoinRequestWhereInput
 }
 
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountAttendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceRecordWhereInput
+}
+
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountTermGradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TermGradeWhereInput
+}
+
 
 export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1444,6 +1744,8 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdBy?: boolean | Prisma.Group$createdByArgs<ExtArgs>
   memberships?: boolean | Prisma.Group$membershipsArgs<ExtArgs>
   joinRequests?: boolean | Prisma.Group$joinRequestsArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.Group$attendanceRecordsArgs<ExtArgs>
+  termGrades?: boolean | Prisma.Group$termGradesArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
@@ -1514,6 +1816,8 @@ export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdBy?: boolean | Prisma.Group$createdByArgs<ExtArgs>
   memberships?: boolean | Prisma.Group$membershipsArgs<ExtArgs>
   joinRequests?: boolean | Prisma.Group$joinRequestsArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.Group$attendanceRecordsArgs<ExtArgs>
+  termGrades?: boolean | Prisma.Group$termGradesArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1535,6 +1839,8 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     createdBy: Prisma.$UserPayload<ExtArgs> | null
     memberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
     joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
+    attendanceRecords: Prisma.$AttendanceRecordPayload<ExtArgs>[]
+    termGrades: Prisma.$TermGradePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1951,6 +2257,8 @@ export interface Prisma__GroupClient<T, Null = never, ExtArgs extends runtime.Ty
   createdBy<T extends Prisma.Group$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   memberships<T extends Prisma.Group$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   joinRequests<T extends Prisma.Group$joinRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceRecords<T extends Prisma.Group$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  termGrades<T extends Prisma.Group$termGradesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$termGradesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TermGradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2460,6 +2768,54 @@ export type Group$joinRequestsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.JoinRequestScalarFieldEnum | Prisma.JoinRequestScalarFieldEnum[]
+}
+
+/**
+ * Group.attendanceRecords
+ */
+export type Group$attendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceRecord
+   */
+  select?: Prisma.AttendanceRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceRecord
+   */
+  omit?: Prisma.AttendanceRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceRecordInclude<ExtArgs> | null
+  where?: Prisma.AttendanceRecordWhereInput
+  orderBy?: Prisma.AttendanceRecordOrderByWithRelationInput | Prisma.AttendanceRecordOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceRecordScalarFieldEnum | Prisma.AttendanceRecordScalarFieldEnum[]
+}
+
+/**
+ * Group.termGrades
+ */
+export type Group$termGradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TermGrade
+   */
+  select?: Prisma.TermGradeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TermGrade
+   */
+  omit?: Prisma.TermGradeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TermGradeInclude<ExtArgs> | null
+  where?: Prisma.TermGradeWhereInput
+  orderBy?: Prisma.TermGradeOrderByWithRelationInput | Prisma.TermGradeOrderByWithRelationInput[]
+  cursor?: Prisma.TermGradeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TermGradeScalarFieldEnum | Prisma.TermGradeScalarFieldEnum[]
 }
 
 /**

@@ -12,7 +12,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api, getDownloadUrl } from '../utils/api';
 
 type AssignmentResponseType = 'TEXT' | 'FILE' | 'TEXT_AND_FILE';
 type AssignmentSubmissionStatus = 'NOT_SUBMITTED' | 'SUBMITTED' | 'GRADED' | 'LATE';
@@ -120,30 +120,11 @@ export const TeacherAssignmentsPage: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    const token = getToken();
-    if (!token) {
-      setError('Авторизация қажет. Қайта кіріңіз.');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const [assignmentsRes, subjectsRes] = await Promise.all([
-        fetch(`${apiUrl}/api/teacher/assignments`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${apiUrl}/api/teacher/subjects-and-topics`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+      const [assignmentsData, subjectsData] = await Promise.all([
+        api.get<{ assignments: TeacherAssignmentItem[] }>('/api/teacher/assignments'),
+        api.get<{ subjects: SubjectWithTopics[] }>('/api/teacher/subjects-and-topics'),
       ]);
-
-      if (!assignmentsRes.ok || !subjectsRes.ok) {
-        throw new Error('Деректерді жүктеу сәтсіз аяқталды');
-      }
-
-      const assignmentsData = await assignmentsRes.json();
-      const subjectsData = await subjectsRes.json();
 
       setAssignments(assignmentsData.assignments || []);
       setSubjectsWithTopics(subjectsData.subjects || []);
@@ -202,10 +183,8 @@ export const TeacherAssignmentsPage: React.FC = () => {
 
     setFormSaving(true);
     setFormError(null);
-    const token = getToken();
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const payload = {
         topicId: formTopicId,
         title: formTitle.trim(),
@@ -216,24 +195,10 @@ export const TeacherAssignmentsPage: React.FC = () => {
         allowLate: formAllowLate,
       };
 
-      const url = editingAssignmentId
-        ? `${apiUrl}/api/teacher/assignments/${editingAssignmentId}`
-        : `${apiUrl}/api/teacher/assignments`;
-
-      const method = editingAssignmentId ? 'PATCH' : 'POST';
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d.message || 'Сақтау мүмкін болмады');
+      if (editingAssignmentId) {
+        await api.patch(`/api/teacher/assignments/${editingAssignmentId}`, payload);
+      } else {
+        await api.post('/api/teacher/assignments', payload);
       }
 
       setIsFormModalOpen(false);
@@ -249,19 +214,8 @@ export const TeacherAssignmentsPage: React.FC = () => {
   const handleDeleteAssignment = async (id: string) => {
     if (!confirm('Бұл тапсырманы және барлық студент жауаптарын өшіруге сенімдісіз бе?')) return;
 
-    const token = getToken();
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const res = await fetch(`${apiUrl}/api/teacher/assignments/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d.message || 'Өшіру сәтсіз аяқталды');
-      }
-
+      await api.delete(`/api/teacher/assignments/${id}`);
       setAssignments((prev) => prev.filter((a) => a.id !== id));
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Өшіру қатесі');
@@ -273,19 +227,8 @@ export const TeacherAssignmentsPage: React.FC = () => {
     setIsSubmissionsModalOpen(true);
     setSubmissionsLoading(true);
 
-    const token = getToken();
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const res = await fetch(`${apiUrl}/api/teacher/assignments/${assignmentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d.message || 'Студент жауаптарын жүктеу сәтсіз болды');
-      }
-
-      const data = await res.json();
+      const data = await api.get<any>(`/api/teacher/assignments/${assignmentId}`);
       setSubmissionsData({
         assignment: data.assignment,
         studentSubmissions: data.studentSubmissions || [],
@@ -314,31 +257,15 @@ export const TeacherAssignmentsPage: React.FC = () => {
     if (!gradingSubmission || !selectedAssignmentId) return;
 
     setGradeSaving(true);
-    const token = getToken();
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const res = await fetch(
-        `${apiUrl}/api/teacher/assignments/${selectedAssignmentId}/submissions/${gradingSubmission.submissionId}/grade`,
+      const resData = await api.patch<any>(
+        `/api/teacher/assignments/${selectedAssignmentId}/submissions/${gradingSubmission.submissionId}/grade`,
         {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            score: Number(gradingSubmission.score),
-            teacherComment: gradingSubmission.teacherComment.trim() || undefined,
-          }),
+          score: Number(gradingSubmission.score),
+          teacherComment: gradingSubmission.teacherComment.trim() || undefined,
         },
       );
-
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d.message || 'Бағалау сәтсіз болды');
-      }
-
-      const resData = await res.json();
 
       // Update submissionsData in state
       setSubmissionsData((prev) => {
@@ -854,7 +781,7 @@ export const TeacherAssignmentsPage: React.FC = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
                               <span>📎 Тіркелген файл:</span>
                               <a
-                                href={item.submission.fileUrl}
+                                href={getDownloadUrl(item.submission.fileUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ color: 'var(--su-primary)', fontWeight: 500 }}

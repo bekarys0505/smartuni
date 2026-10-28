@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { api } from '../utils/api';
 
 interface UniversityItem {
   id: string;
@@ -52,11 +53,7 @@ function RegisterPage() {
     async function loadUniversities() {
       try {
         setDataLoading(true);
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/public/universities`,
-        );
-        if (!res.ok) throw new Error('Университеттерді жүктеу сәтсіз аяқталды');
-        const data = await res.json();
+        const data = await api.get<UniversityItem[]>('/api/public/universities', { skipAuth: true });
         setUniversities(data);
       } catch (err) {
         console.error(err);
@@ -80,11 +77,10 @@ function RegisterPage() {
 
     async function loadFaculties() {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/public/universities/${universityId}/faculties`,
+        const data = await api.get<FacultyItem[]>(
+          `/api/public/universities/${universityId}/faculties`,
+          { skipAuth: true },
         );
-        if (!res.ok) throw new Error('Факультеттерді жүктеу сәтсіз аяқталды');
-        const data = await res.json();
         setFaculties(data);
         setFacultyId('');
         setMajors([]);
@@ -107,11 +103,10 @@ function RegisterPage() {
 
     async function loadMajors() {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/public/faculties/${facultyId}/majors`,
+        const data = await api.get<MajorItem[]>(
+          `/api/public/faculties/${facultyId}/majors`,
+          { skipAuth: true },
         );
-        if (!res.ok) throw new Error('Мамандықтарды жүктеу сәтсіз аяқталды');
-        const data = await res.json();
         setMajors(data);
         setMajorId('');
       } catch (err) {
@@ -156,34 +151,20 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+      await api.post(
+        '/api/auth/register',
         {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            fullName: fullName.trim(),
-            phone: phone.trim(),
-            email: email.trim(),
-            password,
-            universityId,
-            facultyId,
-            majorId,
-            course: Number(course),
-          }),
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          password,
+          universityId,
+          facultyId,
+          majorId,
+          course: Number(course),
         },
+        { skipAuth: true },
       );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMsg = Array.isArray(data?.message)
-          ? data.message.join(', ')
-          : data?.message || 'Тіркелу кезінде қате орын алды';
-        throw new Error(errorMsg);
-      }
 
       setSuccess(
         'Тіркелу сәтті аяқталды! Жүйеге кіру бетіне бағытталуда...',

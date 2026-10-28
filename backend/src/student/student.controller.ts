@@ -138,6 +138,28 @@ export class StudentController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('materials')
+  async getMaterials(
+    @Query('subjectId') subjectId?: string,
+    @Query('type') type?: string,
+    @Query('search') search?: string,
+    @Req()
+    request?: Request & {
+      user?: {
+        sub?: string;
+        email?: string;
+        role?: string;
+      };
+    },
+  ) {
+    return this.studentService.getMaterials(request?.user?.sub, {
+      subjectId,
+      type,
+      search,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('materials/:materialId')
   async getMaterialDetails(
     @Param('materialId') materialId: string,
@@ -525,5 +547,36 @@ export class StudentController {
   ) {
     return this.calendarService.getDiaryForDate(request.user?.sub, dateStr);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('attendance')
+  async getAttendance(
+    @Req()
+    request: Request & {
+      user?: {
+        sub?: string;
+        email?: string;
+        role?: string;
+      };
+    },
+  ) {
+    return this.calendarService.getStudentAttendanceHistory(request.user?.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('grades')
+  async getGrades(
+    @Req()
+    request: Request & {
+      user?: {
+        sub?: string;
+        email?: string;
+        role?: string;
+      };
+    },
+  ) {
+    return this.studentService.getStudentGrades(request.user?.sub);
+  }
 }
+
 

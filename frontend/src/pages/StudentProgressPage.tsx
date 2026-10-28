@@ -12,7 +12,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface MaterialTypeProgress {
   total: number;
@@ -74,18 +74,7 @@ export const StudentProgressPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = getToken();
-      const res = await fetch('/api/student/progress', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Оқу үлгерімі деректерін жүктеу мүмкін болмады');
-      }
-
-      const resData = await res.json();
+      const resData = await api.get<FullProgressResponse>('/api/student/progress');
       setData(resData);
     } catch (err: any) {
       setError(err.message || 'Сервермен байланыс қатесі');

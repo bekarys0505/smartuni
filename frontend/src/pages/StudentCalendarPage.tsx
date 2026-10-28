@@ -12,7 +12,7 @@ import {
   Skeleton,
 } from '../components/ui';
 import { Icon } from '../components/ui/Icon';
-import { getToken } from '../utils/auth';
+import { api } from '../utils/api';
 
 interface CalendarEvent {
   id: string;
@@ -89,9 +89,6 @@ export const StudentCalendarPage: React.FC = () => {
   const fetchEvents = async (year: number, month: number) => {
     try {
       setLoading(true);
-      setError(null);
-      const token = getToken();
-
       // Compute range covering 1 week before month and 1 week after
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
@@ -105,17 +102,7 @@ export const StudentCalendarPage: React.FC = () => {
       const fromStr = formatDateToIso(fromDate);
       const toStr = formatDateToIso(toDate);
 
-      const res = await fetch(`/api/student/calendar?from=${fromStr}&to=${toStr}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Күнтізбе оқиғаларын жүктеу кезінде қате орын алды');
-      }
-
-      const data: CalendarResponse = await res.json();
+      const data = await api.get<CalendarResponse>(`/api/student/calendar?from=${fromStr}&to=${toStr}`);
       setEvents(data.events || []);
     } catch (err: any) {
       setError(err.message || 'Сервермен байланыс қатесі');

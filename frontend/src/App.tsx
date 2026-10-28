@@ -14,22 +14,38 @@ import StudentTestResultPage from './pages/StudentTestResultPage';
 import StudentProgressPage from './pages/StudentProgressPage';
 import { StudentCalendarPage } from './pages/StudentCalendarPage';
 import { StudentDiaryPage } from './pages/StudentDiaryPage';
+import { StudentMaterialsPage } from './pages/StudentMaterialsPage';
 import TeacherDashboardPage from './pages/TeacherDashboardPage';
 import TeacherRequestsPage from './pages/TeacherRequestsPage';
+import TeacherGroupsPage from './pages/TeacherGroupsPage';
+import TeacherGroupDetailPage from './pages/TeacherGroupDetailPage';
+import { TeacherSubjectsPage } from './pages/TeacherSubjectsPage';
+import TeacherTopicsPage from './pages/TeacherTopicsPage';
+import TeacherMaterialsPage from './pages/TeacherMaterialsPage';
 import TeacherAssignmentsPage from './pages/TeacherAssignmentsPage';
 import TeacherTestsPage from './pages/TeacherTestsPage';
 import TeacherTestResultsPage from './pages/TeacherTestResultsPage';
-import AdminDashboardPlaceholder from './pages/AdminDashboardPlaceholder';
+import { TeacherJournalPage } from './pages/TeacherJournalPage';
+import TeacherAttendancePage from './pages/TeacherAttendancePage';
+import ProfilePage from './pages/ProfilePage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminSubjectsPage from './pages/AdminSubjectsPage';
+import AdminGroupsPage from './pages/AdminGroupsPage';
+import AdminAcademicPage from './pages/AdminAcademicPage';
+import TeacherGradesPage from './pages/TeacherGradesPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import { AppShell } from './components/layout/AppShell';
 import { ProtectedRoute, PublicOnlyRoute } from './components/ProtectedRoute';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import './styles.css';
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <ErrorBoundary>
+        <Routes>
         {/* Ашық басты бет */}
         <Route path="/" element={<HomePage />} />
 
@@ -201,15 +217,7 @@ function App() {
           path="/student/materials"
           element={
             <ProtectedRoute allowedRoles={['STUDENT']}>
-              <AppShell userRole="STUDENT">
-                <PlaceholderPage
-                  title="Менің материалдарым"
-                  subtitle="Электронды кітаптар, дәрістер мен силлабустар"
-                  icon="folder"
-                  breadcrumbs={[{ label: 'Студент' }, { label: 'Менің материалдарым' }]}
-                  description="Оқытушылар жүктеген электронды дәрістер, әдістемелік нұсқаулықтар мен оқулықтар жиынтығы."
-                />
-              </AppShell>
+              <StudentMaterialsPage />
             </ProtectedRoute>
           }
         />
@@ -291,15 +299,7 @@ function App() {
           path="/student/profile"
           element={
             <ProtectedRoute allowedRoles={['STUDENT']}>
-              <AppShell userRole="STUDENT">
-                <PlaceholderPage
-                  title="Жеке профиль"
-                  subtitle="Студент туралы академиялық мәліметтер және байланыс"
-                  icon="user"
-                  breadcrumbs={[{ label: 'Студент' }, { label: 'Профиль' }]}
-                  description="Студенттің жеке деректері, факультеті, мамандығы, курсы және қауіпсіздік параметрлері."
-                />
-              </AppShell>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -322,15 +322,7 @@ function App() {
           path="/teacher/groups"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Менің топтарым"
-                  subtitle="Бекітілген академиялық топтар мен студенттер құрамы"
-                  icon="users"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Менің топтарым' }]}
-                  description="Оқытушы жетекшілік ететін барлық оқу топтары, студенттер контингенті және топтық параметрлер."
-                />
-              </AppShell>
+              <TeacherGroupsPage />
             </ProtectedRoute>
           }
         />
@@ -340,15 +332,7 @@ function App() {
           path="/teacher/groups/:groupId"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Топты басқару"
-                  subtitle="Топ құрамындағы студенттер, сабақ кестесі және үлгерім"
-                  icon="users"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Менің топтарым', path: '/teacher/groups' }, { label: 'Топ парақшасы' }]}
-                  description="Таңдалған топтың студенттер тізімі, қатысу журналдары, топтық хабарламалар және журнал бағалары."
-                />
-              </AppShell>
+              <TeacherGroupDetailPage />
             </ProtectedRoute>
           }
         />
@@ -358,15 +342,7 @@ function App() {
           path="/teacher/subjects"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Пәндер"
-                  subtitle="Оқытылатын академиялық пәндер мен оқу жоспарлары"
-                  icon="book"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Пәндер' }]}
-                  description="Оқытушы бекітілген пәндер тізімі, кредиттер саны және силлабус құрылымы."
-                />
-              </AppShell>
+              <TeacherSubjectsPage />
             </ProtectedRoute>
           }
         />
@@ -376,15 +352,7 @@ function App() {
           path="/teacher/topics"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Тақырыптар"
-                  subtitle="Оқу пәндерінің апталық тақырыптық жоспары"
-                  icon="layers"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Тақырыптар' }]}
-                  description="Дәрістер мен практикалық сабақтардың тақырыптары, оқу материалдарын байланыстыру."
-                />
-              </AppShell>
+              <TeacherTopicsPage />
             </ProtectedRoute>
           }
         />
@@ -394,15 +362,7 @@ function App() {
           path="/teacher/materials"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Материалдар"
-                  subtitle="Дәріс материалдарын жүктеу және басқару"
-                  icon="folder"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Материалдар' }]}
-                  description="Пәндер бойынша дәрістер, тапсырмалар мен әдістемелік құралдарды жүктеу және басқару."
-                />
-              </AppShell>
+              <TeacherMaterialsPage />
             </ProtectedRoute>
           }
         />
@@ -458,15 +418,7 @@ function App() {
           path="/teacher/journal"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Электронды журнал"
-                  subtitle="Ағымдағы бағалау және баллдық ведомос"
-                  icon="chart"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Электронды журнал' }]}
-                  description="Студенттердің күнделікті бағаларын қою, аралық нәтижелерді шығару және рейтинг есептеу."
-                />
-              </AppShell>
+              <TeacherJournalPage />
             </ProtectedRoute>
           }
         />
@@ -476,15 +428,7 @@ function App() {
           path="/teacher/attendance"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Қатысу"
-                  subtitle="Сабаққа қатысу журналы және статистикасы"
-                  icon="check"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Қатысу' }]}
-                  description="Студенттердің сабаққа қатысуын белгілеу (қатысты, себепті/себепсіз қатыспады) және мониторинг."
-                />
-              </AppShell>
+              <TeacherAttendancePage />
             </ProtectedRoute>
           }
         />
@@ -512,15 +456,7 @@ function App() {
           path="/teacher/rk1"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Рейтингтік бақылау 1 (РК-1)"
-                  subtitle="1-аралық бақылау қорытынды ведомосы"
-                  icon="award"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'РК-1' }]}
-                  description="Бірінші аралық бақылау баллдарын қорытындылау, ведомості бекіту және нәтижелерді тіркеу."
-                />
-              </AppShell>
+              <TeacherGradesPage defaultPeriod="RK1" />
             </ProtectedRoute>
           }
         />
@@ -530,15 +466,7 @@ function App() {
           path="/teacher/rk2"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Рейтингтік бақылау 2 (РК-2)"
-                  subtitle="2-аралық бақылау қорытынды ведомосы"
-                  icon="award"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'РК-2' }]}
-                  description="Екінші аралық бақылау нәтижелерін енгізу және сессияға дейінгі рұқсат рейтингін анықтау."
-                />
-              </AppShell>
+              <TeacherGradesPage defaultPeriod="RK2" />
             </ProtectedRoute>
           }
         />
@@ -548,15 +476,17 @@ function App() {
           path="/teacher/session"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Сессия"
-                  subtitle="Емтихан ведомостары және қорытынды бағалар"
-                  icon="graduation-cap"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Сессия' }]}
-                  description="Семестрлік емтихандар, қорытынды баллдарды шығару және ведомостарды ресми тапсыру."
-                />
-              </AppShell>
+              <TeacherGradesPage defaultPeriod="SESSION" />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 15.1 Generic Grades */}
+        <Route
+          path="/teacher/grades"
+          element={
+            <ProtectedRoute allowedRoles={['TEACHER']}>
+              <TeacherGradesPage defaultPeriod="ALL" />
             </ProtectedRoute>
           }
         />
@@ -564,6 +494,14 @@ function App() {
         {/* 16. Real Page: Requests */}
         <Route
           path="/teacher/requests"
+          element={
+            <ProtectedRoute allowedRoles={['TEACHER']}>
+              <TeacherRequestsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/join-requests"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
               <TeacherRequestsPage />
@@ -648,15 +586,7 @@ function App() {
           path="/teacher/profile"
           element={
             <ProtectedRoute allowedRoles={['TEACHER']}>
-              <AppShell userRole="TEACHER">
-                <PlaceholderPage
-                  title="Профиль"
-                  subtitle="Оқытушының жеке және академиялық парақшасы"
-                  icon="user"
-                  breadcrumbs={[{ label: 'Оқытушы' }, { label: 'Профиль' }]}
-                  description="Кафедра, ғылыми дәреже, лауазым, байланыс ақпараты және профильді баптау."
-                />
-              </AppShell>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -669,7 +599,7 @@ function App() {
           path="/admin/dashboard"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AdminDashboardPlaceholder />
+              <AdminDashboardPage />
             </ProtectedRoute>
           }
         />
@@ -717,16 +647,7 @@ function App() {
           path="/admin/users"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AppShell userRole="ADMIN">
-                <PlaceholderPage
-                  title="Пайдаланушылар"
-                  subtitle="Жүйенің барлық аккаунттары мен рөлдері (RBAC)"
-                  icon="user"
-                  phaseNumber={6}
-                  breadcrumbs={[{ label: 'Әкімші' }, { label: 'Пайдаланушылар' }]}
-                  description="Қолданушыларды бұғаттау, рөлдерді тағайындау, мәртебесін бақылау (ACTIVE/BLOCKED)."
-                />
-              </AppShell>
+              <AdminUsersPage />
             </ProtectedRoute>
           }
         />
@@ -736,16 +657,7 @@ function App() {
           path="/admin/groups"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AppShell userRole="ADMIN">
-                <PlaceholderPage
-                  title="Топтар"
-                  subtitle="Академиялық топтар құрылымы және сыйымдылығы"
-                  icon="layers"
-                  phaseNumber={6}
-                  breadcrumbs={[{ label: 'Әкімші' }, { label: 'Топтар' }]}
-                  description="Топтарды құру, оқытушыларды бекіту, аудиториялар мен кесте параметрлерін енгізу."
-                />
-              </AppShell>
+              <AdminGroupsPage />
             </ProtectedRoute>
           }
         />
@@ -755,16 +667,7 @@ function App() {
           path="/admin/subjects"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AppShell userRole="ADMIN">
-                <PlaceholderPage
-                  title="Пәндер"
-                  subtitle="Оқу жоспарлары, пәндер каталогы және кредиттер"
-                  icon="book"
-                  phaseNumber={6}
-                  breadcrumbs={[{ label: 'Әкімші' }, { label: 'Пәндер' }]}
-                  description="Академиялық пәндер каталогы, кодтары және оқу бағдарламаларын басқару."
-                />
-              </AppShell>
+              <AdminSubjectsPage />
             </ProtectedRoute>
           }
         />
@@ -807,21 +710,20 @@ function App() {
           }
         />
 
-        {/* 9. Grades */}
+        {/* 9. Academic Monitoring & Grades */}
+        <Route
+          path="/admin/academic"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <AdminAcademicPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/grades"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AppShell userRole="ADMIN">
-                <PlaceholderPage
-                  title="Бағалар"
-                  subtitle="Университет бойынша академиялық үлгерім ведомостары"
-                  icon="chart"
-                  phaseNumber={6}
-                  breadcrumbs={[{ label: 'Әкімші' }, { label: 'Бағалар' }]}
-                  description="Бағалар қорын модерациялау, түзетулер тарихы және GPA мониторингі."
-                />
-              </AppShell>
+              <AdminAcademicPage />
             </ProtectedRoute>
           }
         />
@@ -1002,16 +904,17 @@ function App() {
           path="/admin/profile"
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AppShell userRole="ADMIN">
-                <PlaceholderPage
-                  title="Профиль"
-                  subtitle="Әкімшінің есептік жазбасы мен қауіпсіздігі"
-                  icon="user"
-                  phaseNumber={6}
-                  breadcrumbs={[{ label: 'Әкімші' }, { label: 'Профиль' }]}
-                  description="Әкімші аккаунтының параметрлері, құпия сөзді жаңарту және екі факторлы аутентификация."
-                />
-              </AppShell>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Generic Profile Route for any authenticated role */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN']}>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -1019,6 +922,7 @@ function App() {
         {/* Белгісіз адрес → басты бет */}
         <Route path="*" element={<HomePage />} />
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
