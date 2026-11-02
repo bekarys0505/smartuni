@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api-production-1fe28.up.railway.app/api/:path*"
+      "destination": "https://smartuni-backend-glb8.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
@@ -10,4 +10,3 @@
     }
   ]
 }
-
