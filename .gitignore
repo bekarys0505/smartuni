@@ -17,6 +17,7 @@ build/
 # Database backup / dumps
 *.dump
 *.sql.gz
+backend/prisma/dumps/
 backend/prisma/db_backup*.json
 
 # Uploads
