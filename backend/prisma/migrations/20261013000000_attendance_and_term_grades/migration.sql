@@ -1,8 +1,12 @@
 -- CreateEnum
-CREATE TYPE "AttendanceStatus" AS ENUM ('PRESENT', 'ABSENT', 'LATE', 'EXCUSED');
+DO $$ BEGIN
+    CREATE TYPE "AttendanceStatus" AS ENUM ('PRESENT', 'ABSENT', 'LATE', 'EXCUSED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateTable
-CREATE TABLE "AttendanceRecord" (
+CREATE TABLE IF NOT EXISTS "AttendanceRecord" (
     "id" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
     "groupId" TEXT NOT NULL,
@@ -17,7 +21,7 @@ CREATE TABLE "AttendanceRecord" (
 );
 
 -- CreateTable
-CREATE TABLE "TermGrade" (
+CREATE TABLE IF NOT EXISTS "TermGrade" (
     "id" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
     "groupId" TEXT NOT NULL,
@@ -34,44 +38,72 @@ CREATE TABLE "TermGrade" (
 );
 
 -- CreateIndex
-CREATE INDEX "AttendanceRecord_groupId_date_idx" ON "AttendanceRecord"("groupId", "date");
+CREATE INDEX IF NOT EXISTS "AttendanceRecord_groupId_date_idx" ON "AttendanceRecord"("groupId", "date");
 
 -- CreateIndex
-CREATE INDEX "AttendanceRecord_studentId_date_idx" ON "AttendanceRecord"("studentId", "date");
+CREATE INDEX IF NOT EXISTS "AttendanceRecord_studentId_date_idx" ON "AttendanceRecord"("studentId", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AttendanceRecord_studentId_groupId_date_key" ON "AttendanceRecord"("studentId", "groupId", "date");
+CREATE UNIQUE INDEX IF NOT EXISTS "AttendanceRecord_studentId_groupId_date_key" ON "AttendanceRecord"("studentId", "groupId", "date");
 
 -- CreateIndex
-CREATE INDEX "TermGrade_groupId_idx" ON "TermGrade"("groupId");
+CREATE INDEX IF NOT EXISTS "TermGrade_groupId_idx" ON "TermGrade"("groupId");
 
 -- CreateIndex
-CREATE INDEX "TermGrade_studentId_idx" ON "TermGrade"("studentId");
+CREATE INDEX IF NOT EXISTS "TermGrade_studentId_idx" ON "TermGrade"("studentId");
 
 -- CreateIndex
-CREATE INDEX "TermGrade_subjectId_idx" ON "TermGrade"("subjectId");
+CREATE INDEX IF NOT EXISTS "TermGrade_subjectId_idx" ON "TermGrade"("subjectId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TermGrade_studentId_groupId_key" ON "TermGrade"("studentId", "groupId");
+CREATE UNIQUE INDEX IF NOT EXISTS "TermGrade_studentId_groupId_key" ON "TermGrade"("studentId", "groupId");
 
 -- AddForeignKey
-ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "StudentProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "StudentProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_markedByTeacherId_fkey" FOREIGN KEY ("markedByTeacherId") REFERENCES "TeacherProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "AttendanceRecord" ADD CONSTRAINT "AttendanceRecord_markedByTeacherId_fkey" FOREIGN KEY ("markedByTeacherId") REFERENCES "TeacherProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "StudentProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "StudentProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_markedByTeacherId_fkey" FOREIGN KEY ("markedByTeacherId") REFERENCES "TeacherProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TermGrade" ADD CONSTRAINT "TermGrade_markedByTeacherId_fkey" FOREIGN KEY ("markedByTeacherId") REFERENCES "TeacherProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
