@@ -1,0 +1,32 @@
+services:
+  # Backend Web Service for SmartUni LMS (NestJS + Prisma 7)
+  - type: web
+    name: smartuni-backend
+    runtime: node
+    plan: free
+    region: frankfurt # or oregon / ohio
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/public/universities
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smartuni-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://smartuni.vercel.app
+
+databases:
+  # Managed PostgreSQL for SmartUni LMS
+  - name: smartuni-db
+    plan: free
+    region: frankfurt
+    databaseName: smartuni
+    user: smartuni_user
