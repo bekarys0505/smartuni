@@ -36,6 +36,7 @@ export type IconName =
   | 'grid'
   | 'sparkles'
   | 'award'
+  | 'refresh'
   | 'graduation-cap';
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
@@ -354,6 +355,16 @@ export const Icon: React.FC<IconProps> = ({
         <svg {...commonProps}>
           <circle cx="12" cy="8" r="7" />
           <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+        </svg>
+      );
+
+    case 'refresh':
+      return (
+        <svg {...commonProps}>
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+          <path d="M16 21h5v-5" />
         </svg>
       );
 

@@ -902,7 +902,15 @@ export class TeacherService {
             subject: true,
           },
         },
-        submissions: true,
+        submissions: {
+          include: {
+            student: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
       orderBy: [{ deadline: 'asc' }, { createdAt: 'desc' }],
     });
@@ -911,6 +919,21 @@ export class TeacherService {
       const submissionsCount = a.submissions.filter((s) => s.status !== 'NOT_SUBMITTED').length;
       const gradedCount = a.submissions.filter((s) => s.status === 'GRADED').length;
       const isLate = a.deadline ? new Date() > new Date(a.deadline) : false;
+
+      const submissions = a.submissions
+        .filter((s) => s.status !== 'NOT_SUBMITTED')
+        .map((s) => ({
+          id: s.id,
+          studentId: s.studentId,
+          studentName: s.student.user.fullName,
+          studentEmail: s.student.user.email,
+          textAnswer: s.textAnswer,
+          fileUrl: s.fileUrl,
+          status: s.status,
+          score: s.score,
+          teacherComment: s.teacherComment,
+          submittedAt: s.submittedAt,
+        }));
 
       return {
         id: a.id,
@@ -935,6 +958,7 @@ export class TeacherService {
         submissionsCount,
         gradedCount,
         isLate,
+        submissions,
       };
     });
 
@@ -3381,6 +3405,153 @@ export class TeacherService {
     return {
       message: 'Академиялық бағалар сәтті сақталды',
       savedCount: validGrades.length,
+    };
+  }
+
+  // =========================================================================
+  // TEACHER CALENDAR
+  // =========================================================================
+  async getTeacherCalendar(userId?: string) {
+    const teacher = await this.getTeacherProfileByUserId(userId);
+    const groups = await this.prisma.group.findMany({
+      where: { teacherId: teacher.id },
+      include: {
+        subject: true,
+        _count: { select: { memberships: { where: { status: 'ACTIVE' } } } },
+      },
+    });
+
+    const groupSubjectIds = groups.map((g) => g.subjectId);
+
+    const [assignments, tests] = await Promise.all([
+      this.prisma.assignment.findMany({
+        where: {
+          topic: { subjectId: { in: groupSubjectIds } },
+          deadline: { not: null },
+        },
+        include: {
+          topic: { include: { subject: true } },
+          _count: { select: { submissions: true } },
+        },
+      }),
+      this.prisma.test.findMany({
+        where: {
+          createdByTeacherProfileId: teacher.id,
+        },
+        include: {
+          subject: true,
+          _count: { select: { attempts: true } },
+        },
+      }),
+    ]);
+
+    const events: any[] = [];
+
+    const dayMap: Record<string, number> = {
+      'Дүйсенбі': 1, 'Сейсенбі': 2, 'Сәрсенбі': 3, 'Бейсенбі': 4,
+      'Жұма': 5, 'Сенбі': 6, 'Жексенбі': 0,
+      'Понедельник': 1, 'Вторник': 2, 'Среда': 3, 'Четверг': 4,
+      'Пятница': 5, 'Суббота': 6, 'Воскресенье': 0,
+      'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4,
+      'Friday': 5, 'Saturday': 6, 'Sunday': 0,
+    };
+
+    const now = new Date();
+    for (let i = -21; i <= 21; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+      const dayOfWeek = d.getDay();
+
+      for (const g of groups) {
+        if (g.lessonDay && dayMap[g.lessonDay] === dayOfWeek) {
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const dayStr = String(d.getDate()).padStart(2, '0');
+          events.push({
+            id: `lesson-${g.id}-${y}-${m}-${dayStr}`,
+            type: 'LESSON',
+            title: `${g.subject.name} (Дәріс / Семинар)`,
+            description: `Топ: ${g.name}, Аудитория: ${g.classroom || 'Бас ғимарат'}`,
+            date: `${y}-${m}-${dayStr}`,
+            startTime: g.lessonTime?.split('-')?.[0]?.trim() || '09:00',
+            endTime: g.lessonTime?.split('-')?.[1]?.trim() || '10:30',
+            subjectId: g.subject.id,
+            subjectName: g.subject.name,
+            subjectCode: g.subject.code,
+            location: g.classroom || 'Бас корпус',
+            groupName: g.name,
+            status: 'SCHEDULED',
+          });
+        }
+      }
+    }
+
+    assignments.forEach((a) => {
+      if (a.deadline) {
+        const d = new Date(a.deadline);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(d.getDate()).padStart(2, '0');
+        events.push({
+          id: `assignment-${a.id}`,
+          type: 'ASSIGNMENT_DEADLINE',
+          title: `Мерзім: ${a.title}`,
+          description: `Тақырып: ${a.topic.title}, Тапсырғандар: ${a._count.submissions}`,
+          date: `${y}-${m}-${dayStr}`,
+          startTime: '23:59',
+          endTime: null,
+          subjectId: a.topic.subject.id,
+          subjectName: a.topic.subject.name,
+          subjectCode: a.topic.subject.code,
+          status: 'DEADLINE',
+        });
+      }
+    });
+
+    tests.forEach((t) => {
+      const d = t.scheduledAt ? new Date(t.scheduledAt) : new Date(t.createdAt);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(d.getDate()).padStart(2, '0');
+      events.push({
+        id: `test-${t.id}`,
+        type: 'TEST',
+        title: `Тест: ${t.title}`,
+        description: `Ұзақтығы: ${t.durationMinutes} мин, Тапсырулар: ${t._count.attempts}`,
+        date: `${y}-${m}-${dayStr}`,
+        startTime: '10:00',
+        endTime: null,
+        subjectId: t.subject.id,
+        subjectName: t.subject.name,
+        subjectCode: t.subject.code,
+        status: t.status,
+      });
+    });
+
+    const schedule = groups.map((g, idx) => {
+      const defaultDays = ['Дүйсенбі', 'Сейсенбі', 'Сәрсенбі', 'Бейсенбі', 'Жұма', 'Сенбі'];
+      const defaultTimes = ['09:00 - 10:30', '10:45 - 12:15', '13:00 - 14:30', '14:45 - 16:15'];
+      return {
+        id: g.id,
+        name: g.name,
+        course: g.course,
+        semester: g.semester,
+        academicYear: g.academicYear,
+        lessonDay: g.lessonDay || defaultDays[idx % defaultDays.length],
+        lessonTime: g.lessonTime || defaultTimes[idx % defaultTimes.length],
+        classroom: g.classroom || `${301 + idx}-аудитория`,
+        subject: {
+          id: g.subject.id,
+          name: g.subject.name,
+          code: g.subject.code,
+        },
+      };
+    });
+
+    return {
+      message: 'Оқытушы күнтізбесі',
+      events,
+      schedule,
+      calendar: schedule,
     };
   }
 }

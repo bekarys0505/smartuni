@@ -1087,27 +1087,22 @@ export default function StudentDashboardPage() {
             </div>
           </section>
 
-          <section className="dashboard-card coming-soon-card">
-            <div className="coming-soon-icon">
-              🚀
+          <section className="dashboard-card academic-alerts-card">
+            <div className="card-header">
+              <div>
+                <span className="card-label">АКАДЕМИЯЛЫҚ ХАБАРЛАМАЛАР</span>
+                <h2>Жаңалықтар мен ескертулер</h2>
+              </div>
             </div>
-
-            <div>
-              <span className="card-label">
-                КЕЛЕСІ МҮМКІНДІКТЕР
-              </span>
-
-              <h2>
-                SmartUni мүмкіндіктері жақында
-                осында
-              </h2>
-
-              <p>
-                Пәндер, тапсырмалар, тесттер,
-                бағалар, күнтізбе, прогресс және
-                хабарламалар осы Dashboard арқылы
-                басқарылады.
-              </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <div style={{ padding: '0.75rem 1rem', background: 'rgba(59, 130, 246, 0.08)', borderRadius: '8px', borderLeft: '4px solid #3b82f6' }}>
+                <strong style={{ display: 'block', color: '#1e40af' }}>Аралық бақылау (РК-1) аяқталды</strong>
+                <span style={{ fontSize: '0.875rem', color: '#4b5563' }}>Барлық пәндер бойынша ағымдағы бағаларыңызды «Оқу тарихы» бөлімінен тексеріңіз.</span>
+              </div>
+              <div style={{ padding: '0.75rem 1rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
+                <strong style={{ display: 'block', color: '#065f46' }}>Зертханалық жұмыстар ашық</strong>
+                <span style={{ fontSize: '0.875rem', color: '#4b5563' }}>Практикалық есептерді «Зертханалар» бөлімінде уақытылы өткізуді ұмытпаңыз.</span>
+              </div>
             </div>
           </section>
       </div>

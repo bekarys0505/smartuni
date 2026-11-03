@@ -64,6 +64,20 @@ export class TeacherController {
     return this.teacherService.getDashboard(request.user?.sub);
   }
 
+  @Get('calendar')
+  async getCalendar(
+    @Req()
+    request: Request & {
+      user?: {
+        sub?: string;
+        email?: string;
+        role?: string;
+      };
+    },
+  ) {
+    return this.teacherService.getTeacherCalendar(request.user?.sub);
+  }
+
   @Get('groups')
   async getGroups(
     @Req()

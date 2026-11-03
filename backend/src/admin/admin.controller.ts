@@ -20,6 +20,7 @@ import {
   CreateSubjectDto,
   UpdateAdminGroupDto,
   UpdateSubjectDto,
+  UpdateUniversitySettingsDto,
   UpdateUserRoleDto,
   UpdateUserStatusDto,
 } from './dto/admin.dto';
@@ -159,6 +160,66 @@ export class AdminController {
   @Get('academic/students/:studentId')
   async getStudentAcademicDetails(@Param('studentId') studentId: string) {
     return this.adminService.getStudentAcademicDetails(studentId);
+  }
+
+  // 6. Materials
+  @Get('materials')
+  async getAdminMaterials(
+    @Query('search') search?: string,
+    @Query('type') type?: string,
+    @Query('subjectId') subjectId?: string,
+  ) {
+    return this.adminService.getAdminMaterials({ search, type, subjectId });
+  }
+
+  // 7. Tests
+  @Get('tests')
+  async getAdminTests(
+    @Query('search') search?: string,
+    @Query('subjectId') subjectId?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getAdminTests({ search, subjectId, status });
+  }
+
+  // 8. Requests
+  @Get('requests')
+  async getAdminRequests(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.adminService.getAdminRequests({ search, status });
+  }
+
+  @Patch('requests/:id/resolve')
+  async resolveAdminRequest(
+    @Param('id') requestId: string,
+    @Body('status') status: 'ACCEPTED' | 'REJECTED',
+  ) {
+    return this.adminService.resolveAdminRequest(requestId, status);
+  }
+
+  // 9. Audit Log
+  @Get('audit-log')
+  async getAdminAuditLog() {
+    return this.adminService.getAdminAuditLog();
+  }
+
+  // 10. Settings
+  @Get('settings')
+  async getUniversitySettings() {
+    return this.adminService.getUniversitySettings();
+  }
+
+  @Patch('settings')
+  async updateUniversitySettings(@Body() dto: UpdateUniversitySettingsDto) {
+    return this.adminService.updateUniversitySettings(dto);
+  }
+
+  // 11. Statistics
+  @Get('statistics')
+  async getAdminStatistics() {
+    return this.adminService.getAdminStatistics();
   }
 }
 

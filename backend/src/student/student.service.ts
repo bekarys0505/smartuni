@@ -2083,6 +2083,7 @@ export class StudentService {
         gpa,
       },
       subjects,
+      grades: subjects,
     };
   }
 }

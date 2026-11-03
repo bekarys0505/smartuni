@@ -16,6 +16,7 @@ import {
   CreateSubjectDto,
   UpdateAdminGroupDto,
   UpdateSubjectDto,
+  UpdateUniversitySettingsDto,
   UpdateUserRoleDto,
   UpdateUserStatusDto,
 } from './dto/admin.dto';
@@ -1604,6 +1605,455 @@ export class AdminService {
         totalAssignmentsCount: assignmentsDetails.length,
         completedTestsCount: completedTests.length,
         totalTestsCount: testsDetails.length,
+      },
+    };
+  }
+
+  // =========================================================================
+  // 6. MATERIALS OVERVIEW (ADMIN)
+  // =========================================================================
+  async getAdminMaterials(params: { search?: string; type?: string; subjectId?: string }) {
+    const where: any = {};
+    if (params.search && params.search.trim()) {
+      where.title = { contains: params.search.trim(), mode: 'insensitive' };
+    }
+    if (params.type && params.type !== 'ALL') {
+      where.type = params.type;
+    }
+    if (params.subjectId && params.subjectId !== 'ALL') {
+      where.topic = { subjectId: params.subjectId };
+    }
+
+    const materials = await this.prisma.material.findMany({
+      where,
+      include: {
+        topic: {
+          include: {
+            subject: {
+              select: { id: true, name: true, code: true },
+            },
+          },
+        },
+        _count: {
+          select: { progresses: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      message: 'Материалдар тізімі',
+      materials: materials.map((m) => ({
+        id: m.id,
+        title: m.title,
+        type: m.type,
+        contentUrl: m.contentUrl,
+        contentText: m.contentText,
+        topicId: m.topicId,
+        topicTitle: m.topic.title,
+        subjectId: m.topic.subject.id,
+        subjectName: m.topic.subject.name,
+        subjectCode: m.topic.subject.code,
+        completedStudentsCount: m._count.progresses,
+        createdAt: m.createdAt,
+      })),
+    };
+  }
+
+  // =========================================================================
+  // 7. TESTS OVERVIEW (ADMIN)
+  // =========================================================================
+  async getAdminTests(params: { search?: string; subjectId?: string; status?: string }) {
+    const where: any = {};
+    if (params.search && params.search.trim()) {
+      where.title = { contains: params.search.trim(), mode: 'insensitive' };
+    }
+    if (params.status && params.status !== 'ALL') {
+      where.status = params.status;
+    }
+    if (params.subjectId && params.subjectId !== 'ALL') {
+      where.subjectId = params.subjectId;
+    }
+
+    const tests = await this.prisma.test.findMany({
+      where,
+      include: {
+        subject: { select: { id: true, name: true, code: true } },
+        teacherProfile: {
+          include: {
+            user: { select: { fullName: true, email: true } },
+          },
+        },
+        _count: {
+          select: { questions: true, attempts: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      message: 'Тесттер тізімі',
+      tests: tests.map((t) => ({
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        durationMinutes: t.durationMinutes,
+        status: t.status,
+        maxScore: t.maxScore,
+        scheduledAt: t.scheduledAt,
+        subjectId: t.subject.id,
+        subjectName: t.subject.name,
+        subjectCode: t.subject.code,
+        teacherName: t.teacherProfile?.user?.fullName || 'Мұғалім',
+        questionsCount: t._count.questions,
+        attemptsCount: t._count.attempts,
+        createdAt: t.createdAt,
+      })),
+    };
+  }
+
+  // =========================================================================
+  // 8. JOIN REQUESTS MANAGEMENT (ADMIN)
+  // =========================================================================
+  async getAdminRequests(params: { search?: string; status?: string }) {
+    const where: any = {};
+    if (params.status && params.status !== 'ALL') {
+      where.status = params.status;
+    }
+    if (params.search && params.search.trim()) {
+      const q = params.search.trim();
+      where.OR = [
+        { student: { user: { fullName: { contains: q, mode: 'insensitive' } } } },
+        { group: { name: { contains: q, mode: 'insensitive' } } },
+      ];
+    }
+
+    const requests = await this.prisma.joinRequest.findMany({
+      where,
+      include: {
+        student: {
+          include: {
+            user: { select: { fullName: true, email: true, phone: true } },
+            major: { select: { name: true } },
+          },
+        },
+        group: {
+          include: {
+            subject: { select: { name: true, code: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      message: 'Өтініштер тізімі',
+      requests: requests.map((r) => ({
+        id: r.id,
+        status: r.status,
+        createdAt: r.createdAt,
+        respondedAt: r.respondedAt,
+        student: {
+          id: r.student.id,
+          fullName: r.student.user.fullName,
+          email: r.student.user.email,
+          phone: r.student.user.phone,
+          major: r.student.major?.name || null,
+        },
+        group: {
+          id: r.group.id,
+          name: r.group.name,
+          subjectName: r.group.subject.name,
+          subjectCode: r.group.subject.code,
+        },
+      })),
+    };
+  }
+
+  async resolveAdminRequest(requestId: string, status: 'ACCEPTED' | 'REJECTED') {
+    const req = await this.prisma.joinRequest.findUnique({
+      where: { id: requestId },
+      include: { group: true },
+    });
+    if (!req) {
+      throw new NotFoundException('Өтініш табылмады');
+    }
+
+    if (status === 'ACCEPTED') {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.joinRequest.update({
+          where: { id: requestId },
+          data: { status: 'ACCEPTED', respondedAt: new Date() },
+        });
+
+        const existing = await tx.groupMembership.findUnique({
+          where: {
+            studentId_groupId: {
+              studentId: req.studentId,
+              groupId: req.groupId,
+            },
+          },
+        });
+
+        if (!existing) {
+          await tx.groupMembership.create({
+            data: {
+              studentId: req.studentId,
+              groupId: req.groupId,
+              status: 'ACTIVE',
+            },
+          });
+        }
+      });
+    } else {
+      await this.prisma.joinRequest.update({
+        where: { id: requestId },
+        data: { status: 'REJECTED', respondedAt: new Date() },
+      });
+    }
+
+    return { message: 'Өтініш шешімі сақталды' };
+  }
+
+  // =========================================================================
+  // 9. AUDIT LOG (ADMIN)
+  // =========================================================================
+  async getAdminAuditLog() {
+    const [recentUsers, recentSubmissions, recentAttempts, recentAttendance] = await Promise.all([
+      this.prisma.user.findMany({
+        take: 15,
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, fullName: true, email: true, role: true, status: true, createdAt: true },
+      }),
+      this.prisma.assignmentSubmission.findMany({
+        take: 15,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          student: { include: { user: { select: { fullName: true } } } },
+          assignment: { select: { title: true } },
+        },
+      }),
+      this.prisma.testAttempt.findMany({
+        take: 15,
+        orderBy: { startedAt: 'desc' },
+        include: {
+          student: { include: { user: { select: { fullName: true } } } },
+          test: { select: { title: true } },
+        },
+      }),
+      this.prisma.attendanceRecord.findMany({
+        take: 15,
+        orderBy: { date: 'desc' },
+        include: {
+          student: { include: { user: { select: { fullName: true } } } },
+          group: { select: { name: true } },
+        },
+      }),
+    ]);
+
+    const logs: Array<{ id: string; action: string; category: string; target: string; user: string; timestamp: Date; status: string }> = [];
+
+    recentUsers.forEach((u) => {
+      logs.push({
+        id: `user-${u.id}`,
+        action: 'Пайдаланушы тіркелуі / жаңартылуы',
+        category: 'AUTH',
+        target: u.fullName,
+        user: u.email,
+        timestamp: u.createdAt,
+        status: u.status,
+      });
+    });
+
+    recentSubmissions.forEach((s) => {
+      logs.push({
+        id: `sub-${s.id}`,
+        action: 'Тапсырма жауабын жіберу',
+        category: 'ACADEMIC',
+        target: s.assignment.title,
+        user: s.student.user.fullName,
+        timestamp: s.submittedAt || s.createdAt,
+        status: s.status,
+      });
+    });
+
+    recentAttempts.forEach((a) => {
+      logs.push({
+        id: `test-${a.id}`,
+        action: 'Тест тапсыру әрекеті',
+        category: 'ASSESSMENT',
+        target: a.test.title,
+        user: a.student.user.fullName,
+        timestamp: a.startedAt,
+        status: a.status,
+      });
+    });
+
+    recentAttendance.forEach((att) => {
+      logs.push({
+        id: `att-${att.id}`,
+        action: `Сабаққа қатысу белгісі (${att.status})`,
+        category: 'ATTENDANCE',
+        target: att.group.name,
+        user: att.student.user.fullName,
+        timestamp: att.date,
+        status: att.status,
+      });
+    });
+
+    logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    return {
+      message: 'Әрекеттер журналы',
+      logs: logs.slice(0, 50),
+    };
+  }
+
+  // =========================================================================
+  // 10. UNIVERSITY SETTINGS (ADMIN)
+  // =========================================================================
+  async getUniversitySettings() {
+    let uni = await this.prisma.university.findFirst({
+      include: {
+        faculties: {
+          include: {
+            majors: true,
+          },
+        },
+        _count: {
+          select: {
+            students: true,
+            teachers: true,
+          },
+        },
+      },
+    });
+
+    if (!uni) {
+      await this.prisma.university.create({
+        data: {
+          name: 'Шоқан Уәлиханов атындағы Көкшетау университеті',
+          shortName: 'KU',
+        },
+      });
+
+      uni = await this.prisma.university.findFirst({
+        include: {
+          faculties: {
+            include: {
+              majors: true,
+            },
+          },
+          _count: {
+            select: {
+              students: true,
+              teachers: true,
+            },
+          },
+        },
+      });
+    }
+
+    return {
+      message: 'Университет баптаулары',
+      settings: {
+        id: uni!.id,
+        name: uni!.name,
+        shortName: uni!.shortName || 'KU',
+        code: 'KU-01',
+        phone: '+7 (7162) 25-55-97',
+        email: 'info@shokan.edu.kz',
+        address: 'Көкшетау қ., Абай к-сі, 76',
+        website: 'https://shokan.edu.kz',
+        academicYear: '2026-2027',
+        currentSemester: 'Күзгі семестр',
+        facultiesCount: uni ? uni.faculties.length : 0,
+        studentsCount: uni ? uni._count.students : 0,
+        teachersCount: uni ? uni._count.teachers : 0,
+        faculties: uni ? uni.faculties : [],
+      },
+    };
+  }
+
+  async updateUniversitySettings(dto: UpdateUniversitySettingsDto) {
+    let uni = await this.prisma.university.findFirst();
+    if (!uni) {
+      uni = await this.prisma.university.create({
+        data: {
+          name: dto.name || 'Шоқан Уәлиханов атындағы Көкшетау университеті',
+          shortName: dto.shortName || 'KU',
+        },
+      });
+    } else {
+      uni = await this.prisma.university.update({
+        where: { id: uni.id },
+        data: {
+          name: dto.name ?? uni.name,
+          shortName: dto.shortName ?? uni.shortName,
+        },
+      });
+    }
+
+    return {
+      message: 'Университет баптаулары сәтті жаңартылды',
+      settings: {
+        ...uni,
+        code: dto.code || 'KU-01',
+        phone: dto.phone || '+7 (7162) 25-55-97',
+        email: dto.email || 'info@shokan.edu.kz',
+        address: dto.address || 'Көкшетау қ., Абай к-сі, 76',
+        website: dto.website || 'https://shokan.edu.kz',
+      },
+    };
+  }
+
+  // =========================================================================
+  // 11. ADVANCED STATISTICS (ADMIN)
+  // =========================================================================
+  async getAdminStatistics() {
+    const [
+      totalStudents,
+      totalTeachers,
+      totalGroups,
+      totalSubjects,
+      totalMaterials,
+      totalAssignments,
+      totalSubmissions,
+      totalTests,
+      totalAttempts,
+      totalAttendance,
+      presentAttendance,
+    ] = await Promise.all([
+      this.prisma.studentProfile.count(),
+      this.prisma.teacherProfile.count(),
+      this.prisma.group.count(),
+      this.prisma.subject.count(),
+      this.prisma.material.count(),
+      this.prisma.assignment.count(),
+      this.prisma.assignmentSubmission.count(),
+      this.prisma.test.count(),
+      this.prisma.testAttempt.count(),
+      this.prisma.attendanceRecord.count(),
+      this.prisma.attendanceRecord.count({ where: { status: 'PRESENT' } }),
+    ]);
+
+    const attendanceRate = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 100;
+    const submissionRate = totalAssignments > 0 ? Math.round((totalSubmissions / (totalAssignments * Math.max(1, totalStudents))) * 100) : 0;
+
+    return {
+      message: 'Платформа аналитикасы мен статистикасы',
+      stats: {
+        totalStudents,
+        totalTeachers,
+        totalGroups,
+        totalSubjects,
+        totalMaterials,
+        totalAssignments,
+        totalSubmissions,
+        totalTests,
+        totalAttempts,
+        attendanceRate,
+        submissionRate,
       },
     };
   }
